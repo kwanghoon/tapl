@@ -219,4 +219,8 @@ Exercises
  - Do not change the form. You are only allowed to add as many lines
    as your solution needs.
 
+ - The file name should be in the form of 
+
+     Ocaml-Exercise-[Student ID]_[Name].txt
+
 ===================================================================================
