@@ -57,7 +57,7 @@ Exercises
 (List-2) length : 'a list -> int
 
   - length [1;2;3] ==> 3
-  - length [] ==> 1
+  - length [] ==> 0
 
   (Do not use the list library.)
 
