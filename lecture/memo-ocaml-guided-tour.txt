@@ -113,10 +113,10 @@ let (x,y) = (1,2) ;;
 
 
 
-[List]===============================================
+[List and list patterns]=======================================
 
 
- let languages = [ "OCaml" ; "Perl" ; "C" ] ;; 
+let languages = [ "OCaml" ; "Perl" ; "C" ] ;; 
 val languages : string list = ["OCaml"; "Perl"; "C"]
 
    [ "OCaml" ; "Perl" ; "C" ] ==> a list of three stings !! 
@@ -192,6 +192,29 @@ cf. rec ===> recusive function (재귀 함수)
 # 
 
 
+- polymorphic function
+
+let rec mylen l = 
+            match l with 
+            | [] -> 0 
+            | x :: xs -> 1 + mylen xs ;; 
+val mylen : 'a list -> int = <fun>
+utop[27]> [1, 2, 3];;
+- : (int * int * int) list = [(1, 2, 3)]
+utop[28]> [1;2;3];;
+- : int list = [1; 2; 3]
+utop[29]> ["1";"2";"3"];;
+- : string list = ["1"; "2"; "3"]
+utop[30]> mylen [1;2;3];;
+- : int = 3
+utop[31]> mylen ["1";"2";"3"];;
+- : int = 3
+
+
+cf. mylen is called a polymorphic function.
+    (mylen : 'a list ->  int)
+
+
 ===> 9월 8일 (한국어 수업 : sum 함수까지 공부함)    
 
 
@@ -221,9 +244,15 @@ Error: Unbound value int
 - : int option = None
 # 
 
+ - Initial problematic version
+     let mydiv x y = x / y
 
 function type
  - int -> int -> int option   
+
+ - An improved version using optional values
+
+  let mydiv x y = if y = 0 then None else Some (x / y)
 
 
 =======================
@@ -256,14 +285,17 @@ primitive types
 [List types]
 
 
-  This topic will be covered next week !!!
-  But to do your homework, please do self-study about lists and list types !!!
-
-
 [user-defined types]
  - record types
  - variant types
 
+User-defeind type names
+
+ In C, you have 'typedef' that allows you to define a type name!
+
+ typedef int MONEY;
+
+ MONEY x;    // instead of int x; !!!
 
 
 [Record types]
@@ -325,15 +357,48 @@ type day =    ===> The type name must not begin with a capital letter !!!
                    Every data constructor must begin with a capital letter!!!
   | Monday    ===> Monday is another data constructor!!
   | Tuesday
-  | Wednsday
+  | Wednesday
   | Thursday
   | Friday
   | Saturday
+
 #  Sunday;;
 - : day = Sunday
 # Tuesday ;;
 - : day = Tuesday
 
+
+let holiday d = 
+     match d with 
+     | Sunday -> true
+     | Monday -> false
+     | Tuesday -> false
+     | Wednesday -> false
+     | Thursday -> false
+     | Friday -> false
+     | Saturday -> true
+
+type day =
+    Sunday
+  | Monday
+  | Tuesday
+  | Wednesday
+  | Thursday
+  | Friday
+  | Saturday
+
+Sunday ~ Saturday are values called *constructors*!
+
+let holiday d = 
+     match d with 
+     | Sunday -> true
+     | Monday -> false
+     | Tuesday -> false
+     | Wednesday -> false
+     | Thursday -> false
+     | Friday -> false
+     | Saturday -> true
+;;
 
  type int_binary_tree = 
    | Empty
@@ -359,9 +424,20 @@ type day =    ===> The type name must not begin with a capital letter !!!
 # Empty;;
 - : int_binary_tree = Empty
 
-Node (1, Empty, Empty);;
+utop[63]>  type int_binary_tree = 
+   | Empty
+   | Node of int * int_binary_tree * int_binary_tree 
+;;
+type int_binary_tree =
+    Empty
+  | Node of int * int_binary_tree * int_binary_tree
+utop[64]> Empty;;
+- : int_binary_tree = Empty
+utop[65]> Node ;;
+Line 1, characters 0-4:
+Error: The constructor Node expects 3 argument(s),
+       but is applied here to 0 argument(s)
+utop[66]> Node (1, Empty, Empty);;
 - : int_binary_tree = Node (1, Empty, Empty)
-# Node (1, Node (2, Empty, Empty), Node (3, Empty, Node (4, Empty, Empty))) ;;
-- : int_binary_tree =
-Node (1, Node (2, Empty, Empty), Node (3, Empty, Node (4, Empty, Empty)))
-# 
+utop[67]> 
+
