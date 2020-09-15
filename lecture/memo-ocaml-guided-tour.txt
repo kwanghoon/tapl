@@ -99,6 +99,9 @@ let (x,y) = (1,2) ;;
  x ===> 1
  y ===> 2
 
+let mymove (x,y) = (x-100,y+100) ;;
+val mymove : int * int -> int * int = <fun>
+
 # let distance (x1,y1) (x2,y2) =
    Float.sqrt ((x1 -. x2) *. (x1 -. x2) +. (y1 -. y2) *. (y1 -. y2) )
 
@@ -125,6 +128,30 @@ val languages : string list = ["OCaml"; "Perl"; "C"]
                    (문자열을 원소로 하는 리스트 타입)
 
 List module
+
+# List.map ;;
+- : ('a -> 'b) -> 'a list -> 'b list = <fun>
+
+   The type of the 1st argument: 'a -> 'b
+   The type of the 2nd argument: 'a list
+
+   'a, 'b : type variables (타입 변수)
+
+utop[14]> [1;2;3];;
+- : int list = [1; 2; 3]
+utop[15]> ["one";"two";"three"];;
+- : string list = ["one"; "two"; "three"]
+utop[16]> let f x = x + 2;;
+val f : int -> int = <fun>
+utop[17]> let g s = String.length s ;;
+val g : string -> int = <fun>
+utop[18]> List.map f [1;2;3];; 
+- : int list = [3; 4; 5]
+utop[19]> List.map g ["one"; "two"; "three"] ;;
+- : int list = [3; 3; 5]
+utop[20]> List.map ;;
+- : ('a -> 'b) -> 'a list -> 'b list = <fun>
+
 
 # List.map String.length languages ;;
 - : int list = [5; 4; 1]
@@ -192,12 +219,13 @@ cf. rec ===> recusive function (재귀 함수)
 # 
 
 
-- polymorphic function
+- polymorphic function (폴리모픽 함수, 다형 함수)
 
 let rec mylen l = 
             match l with 
             | [] -> 0 
             | x :: xs -> 1 + mylen xs ;; 
+
 val mylen : 'a list -> int = <fun>
 utop[27]> [1, 2, 3];;
 - : (int * int * int) list = [(1, 2, 3)]
@@ -213,9 +241,6 @@ utop[31]> mylen ["1";"2";"3"];;
 
 cf. mylen is called a polymorphic function.
     (mylen : 'a list ->  int)
-
-
-===> 9월 8일 (한국어 수업 : sum 함수까지 공부함)    
 
 
 ==========
@@ -254,6 +279,18 @@ function type
 
   let mydiv x y = if y = 0 then None else Some (x / y)
 
+let retNone x = None ;;
+val retNone : 'a -> 'b option = <fun>
+utop[56]> let f opt =
+            match opt with
+            | None -> 0
+            | Some x -> x;;
+val f : int option -> int = <fun>
+utop[57]> f (Some 1);;
+- : int = 1
+utop[58]> f None;;
+- : int = 0
+utop[59]> 
 
 =======================
 4. Records and vairants
@@ -293,7 +330,7 @@ User-defeind type names
 
  In C, you have 'typedef' that allows you to define a type name!
 
- typedef int MONEY;
+ typedef int MONEY;   // typedef [기존 타입 이름] [새로운 타입 이름]
 
  MONEY x;    // instead of int x; !!!
 
@@ -367,6 +404,15 @@ type day =    ===> The type name must not begin with a capital letter !!!
 # Tuesday ;;
 - : day = Tuesday
 
+type day =       # day: You defined the name, day!  
+    Sunday       #
+  | Monday       # Sunday, Monday, ... Saturday 
+  | Tuesday      #    ===> Values, Constructors, Constructor value.
+  | Wednesday
+  | Thursday
+  | Friday
+  | Saturday
+
 
 let holiday d = 
      match d with 
@@ -378,16 +424,11 @@ let holiday d =
      | Friday -> false
      | Saturday -> true
 
-type day =
-    Sunday
-  | Monday
-  | Tuesday
-  | Wednesday
-  | Thursday
-  | Friday
-  | Saturday
-
 Sunday ~ Saturday are values called *constructors*!
+
+ - day 타입에서 정의한 Sunday부터 Saturday까지를 
+   값(value)이라고 부르거나
+   컨트스트럭터(constructor)라고 부릅니다.
 
 let holiday d = 
      match d with 
@@ -404,6 +445,10 @@ let holiday d =
    | Empty
    | Node of int * int_binary_tree * int_binary_tree 
 
+
+ - int_binary_tree 타입에서 Empty와 Node를 컨스트럭터라고 부릅니다.
+   컨스트럭터는 일반적으로 인자를 갖을 수 있습니다!
+     
 
    ===> Empty and Node are data constructors !!!
    ===> A data constructor can have one or more arguments!!!
@@ -441,3 +486,22 @@ utop[66]> Node (1, Empty, Empty);;
 - : int_binary_tree = Node (1, Empty, Empty)
 utop[67]> 
 
+let rec nodecount t = 
+     match t with
+     | Empty -> 0
+     | Node (i, left_tree, right_tree) -> 
+        1 + nodecount left_tree  + nodecount right_tree;;
+
+val nodecount : int_binary_tree -> int = <fun>
+
+nodecount (Node (123, Empty, Empty)) ;;
+- : int = 1
+utop[76]> nodecount Empty ;;
+- : int = 0
+utop[77]> nodecount (Node (1, Node (2, Empty, Empty), Node (3, Empty, Node (4, Empty, Empty))) ) ;;
+- : int = 4
+utop[78]> 
+
+
+e
+===> 9월 15일 
