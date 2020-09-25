@@ -11,7 +11,7 @@ Study the following topics in the guided tour
  - https://dev.realworldocaml.org/guided-tour.html
 
 
- 1) int float string char 
+ 1) int float string char
 
  2) let binding
 
@@ -31,7 +31,7 @@ Study the following topics in the guided tour
 
  9) refs
 
-You may refer to 
+You may refer to
 
  - Chapter 26 The standard library
      https://caml.inria.fr/pub/docs/manual-ocaml/index.html
@@ -78,7 +78,7 @@ Exercises
 
 
 
-(List-4) flatten : 'a node -> 'a list
+(List-4) flatten : 'a node list -> 'a list
 
     type 'a node =
     | One of 'a
@@ -96,7 +96,7 @@ Exercises
 
   - run_length ['a'; 'a'; 'a'; 'b'; 'b'; 'c'; 'c'; 'c'; 'c']
     ==> [(3, 'a'); (2, 'b'); (4, 'c')]
- 
+
     i.e., three 'a', two 'b', and four 'c' !!!
 
 [SOLUTION]
@@ -125,9 +125,9 @@ Exercises
     return x
 
    - newton_square : float -> float
-   
+
    - write a recursive function in OCaml!
-   
+
 [SOLUTION]
 
 
@@ -214,12 +214,12 @@ Exercises
 
 [Submission guideline]
 
- - Submit this text file including your solutions for the exercises. 
+ - Submit this text file including your solutions for the exercises.
 
  - Do not change the form. You are only allowed to add as many lines
    as your solution needs.
 
- - The file name should be in the form of 
+ - The file name should be in the form of
 
      Ocaml-Exercise-[Student ID]_[Name].txt
 

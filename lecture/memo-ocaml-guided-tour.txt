@@ -13,7 +13,7 @@
 - : Base.Float.t = 9.5
 # 3 * 5 > 14 ;;
 - : bool = true
-# 
+#
 #
 
 
@@ -27,16 +27,16 @@ let x = 3 + 4 ;;
 val x : int = 7
 # x ;;
 - : int = 7
-# x + 10 ;; 
+# x + 10 ;;
 - : int = 17
 # let x = let y = 1 + 2 in y + 3;;
 val x : int = 6
- 
+
 ====================================
 3. Functions and type inference  [X]
 ====================================
 
-# let square x = x * x;;  
+# let square x = x * x;;
 val square : int -> int = <fun>
 
    ===> local function, square, (지역함수 square) !!
@@ -46,7 +46,7 @@ val square : int -> int = <fun>
                      (int 인자를 받아 int 결과를 내는 함수 타입)
 
    ===> type inference !! (타입 유추)
-        It is not always necessary for programmers to write types explicitly 
+        It is not always necessary for programmers to write types explicitly
         (프로그래머가 타입을 항상 명시적으로 작성할 필요가 없다.))
 
 let ratio x y = x /. y ;;
@@ -60,12 +60,12 @@ val ratio : float -> float -> float = <fun>
          float -> float -> float
 
         (그 결과 ratio 함수는 위의 타입을 갖는다.)
-   
 
 
-# square 2 ;; 
+
+# square 2 ;;
 - : int = 4
-# square 3 ;; 
+# square 3 ;;
 - : int = 9
 
 ===============================================
@@ -75,8 +75,8 @@ val ratio : float -> float -> float = <fun>
 [Tuples]==========================================
 
 
- (3, "three") ;;    
-- : int * string = (3, "three")  
+ (3, "three") ;;
+- : int * string = (3, "three")
 
   (3, "three") ===> Tuple value (튜플)
   int * string  ===> tuple type (튜플 타입)
@@ -119,10 +119,10 @@ val mymove : int * int -> int * int = <fun>
 [List and list patterns]=======================================
 
 
-let languages = [ "OCaml" ; "Perl" ; "C" ] ;; 
+let languages = [ "OCaml" ; "Perl" ; "C" ] ;;
 val languages : string list = ["OCaml"; "Perl"; "C"]
 
-   [ "OCaml" ; "Perl" ; "C" ] ==> a list of three stings !! 
+   [ "OCaml" ; "Perl" ; "C" ] ==> a list of three stings !!
                                   (3개의 문자열로 구성된 리스트)
    string list ==> string list type !!!
                    (문자열을 원소로 하는 리스트 타입)
@@ -145,7 +145,7 @@ utop[16]> let f x = x + 2;;
 val f : int -> int = <fun>
 utop[17]> let g s = String.length s ;;
 val g : string -> int = <fun>
-utop[18]> List.map f [1;2;3];; 
+utop[18]> List.map f [1;2;3];;
 - : int list = [3; 4; 5]
 utop[19]> List.map g ["one"; "two"; "three"] ;;
 - : int list = [3; 3; 5]
@@ -168,7 +168,7 @@ utop[20]> List.map ;;
 "French" :: "Spanish" :: languages ;;
 - : string list = ["French"; "Spanish"; "OCaml"; "Perl"; "C"]
 
-(::) : 'a -> 'a list -> 'a list 
+(::) : 'a -> 'a list -> 'a list
 
  - To make a new list from an element and a list
    (1개 원소와 1개 리스트를 받아 새로운 리스트를 만듬!)
@@ -177,19 +177,19 @@ utop[20]> List.map ;;
 - : int list = [1]
 # 1 :: 2 :: [] ;;
 - : int list = [1; 2]
-# 
+#
 
-[1;2;3] @ [4;5;6] 
+[1;2;3] @ [4;5;6]
 
- @ ===> To concate two lists 
+ @ ===> To concate two lists
         (두 리스트를 받아 붙여 하나의 리스트를 만듬!!)
 
 
 [List patterns (리스트 패턴)]===========================
 
 
-let my_favorite l = 
-  match l with 
+let my_favorite l =
+  match l with
   |  [] -> "OCaml"
   |  x :: xs -> x
 
@@ -201,30 +201,30 @@ val my_favorite : string list -> string = <fun>
 
 [Recursive list functions]
 
-let rec sum l =         
+let rec sum l =
   match l with
   | [] -> 0
-  | x :: xs -> x + sum xs 
+  | x :: xs -> x + sum xs
 
 val sum : int list -> int = <fun>
 
  ===> l has type int list (l은 정수를 원소로 하는 리스트)
 
 cf. rec ===> recusive function (재귀 함수)
-   
+
 [1;2;3;4;5];;
 - : int list = [1; 2; 3; 4; 5]
 # sum [1;2;3;4;5];;
 - : int = 15
-# 
+#
 
 
 - polymorphic function (폴리모픽 함수, 다형 함수)
 
-let rec mylen l = 
-            match l with 
-            | [] -> 0 
-            | x :: xs -> 1 + mylen xs ;; 
+let rec mylen l =
+            match l with
+            | [] -> 0
+            | x :: xs -> 1 + mylen xs ;;
 
 val mylen : 'a list -> int = <fun>
 utop[27]> [1, 2, 3];;
@@ -249,7 +249,7 @@ cf. mylen is called a polymorphic function.
 
 
 option is a common type in O'Caml.
-The values of option type is either Some v or None. 
+The values of option type is either Some v or None.
 
   Some 1;;
 - : int option = Some 1
@@ -267,13 +267,13 @@ Line 1, characters 9-12:
 Error: Unbound value int
 #  (None : int option);;
 - : int option = None
-# 
+#
 
  - Initial problematic version
      let mydiv x y = x / y
 
 function type
- - int -> int -> int option   
+ - int -> int -> int option
 
  - An improved version using optional values
 
@@ -290,7 +290,7 @@ utop[57]> f (Some 1);;
 - : int = 1
 utop[58]> f None;;
 - : int = 0
-utop[59]> 
+utop[59]>
 
 =======================
 4. Records and vairants
@@ -308,7 +308,7 @@ primitive types
 
 [Tuple types]
 
-# (1, 'a', "hello") ;;    
+# (1, 'a', "hello") ;;
 - : int * char * string = (1, a, "hello")
 
 
@@ -336,7 +336,7 @@ User-defeind type names
 
 
 [Record types]
- - type point2d = { x : float; y : float }    
+ - type point2d = { x : float; y : float }
 
     ==> record type!!!
     ==> x and y are fields!!!
@@ -360,7 +360,7 @@ val select_x : point2d -> float = <fun>
 val select_y : point2d -> float = <fun>
 
     ==> r.y (assuming r is a record) is a selection of the field y from the record. !!!!
-   
+
 
 # select_y p ;;
 - : float = -4.
@@ -384,7 +384,7 @@ val move : point2d -> point2d = <fun>
 
 # move p;;
 - : point2d = {x = 13.; y = 6.}
-# 
+#
 
 Variant types
 
@@ -404,9 +404,9 @@ type day =    ===> The type name must not begin with a capital letter !!!
 # Tuesday ;;
 - : day = Tuesday
 
-type day =       # day: You defined the name, day!  
+type day =       # day: You defined the name, day!
     Sunday       #
-  | Monday       # Sunday, Monday, ... Saturday 
+  | Monday       # Sunday, Monday, ... Saturday
   | Tuesday      #    ===> Values, Constructors, Constructor value.
   | Wednesday
   | Thursday
@@ -414,8 +414,8 @@ type day =       # day: You defined the name, day!
   | Saturday
 
 
-let holiday d = 
-     match d with 
+let holiday d =
+     match d with
      | Sunday -> true
      | Monday -> false
      | Tuesday -> false
@@ -426,12 +426,12 @@ let holiday d =
 
 Sunday ~ Saturday are values called *constructors*!
 
- - day 타입에서 정의한 Sunday부터 Saturday까지를 
+ - day 타입에서 정의한 Sunday부터 Saturday까지를
    값(value)이라고 부르거나
    컨트스트럭터(constructor)라고 부릅니다.
 
-let holiday d = 
-     match d with 
+let holiday d =
+     match d with
      | Sunday -> true
      | Monday -> false
      | Tuesday -> false
@@ -441,14 +441,14 @@ let holiday d =
      | Saturday -> true
 ;;
 
- type int_binary_tree = 
+ type int_binary_tree =
    | Empty
-   | Node of int * int_binary_tree * int_binary_tree 
+   | Node of int * int_binary_tree * int_binary_tree
 
 
  - int_binary_tree 타입에서 Empty와 Node를 컨스트럭터라고 부릅니다.
    컨스트럭터는 일반적으로 인자를 갖을 수 있습니다!
-     
+
 
    ===> Empty and Node are data constructors !!!
    ===> A data constructor can have one or more arguments!!!
@@ -459,9 +459,9 @@ let holiday d =
    / \
    *  4
 
-#  type int_binary_tree = 
+#  type int_binary_tree =
    | Empty
-   | Node of int * int_binary_tree * int_binary_tree 
+   | Node of int * int_binary_tree * int_binary_tree
 ;;
       type int_binary_tree =
     Empty
@@ -469,9 +469,9 @@ let holiday d =
 # Empty;;
 - : int_binary_tree = Empty
 
-utop[63]>  type int_binary_tree = 
+utop[63]>  type int_binary_tree =
    | Empty
-   | Node of int * int_binary_tree * int_binary_tree 
+   | Node of int * int_binary_tree * int_binary_tree
 ;;
 type int_binary_tree =
     Empty
@@ -484,12 +484,12 @@ Error: The constructor Node expects 3 argument(s),
        but is applied here to 0 argument(s)
 utop[66]> Node (1, Empty, Empty);;
 - : int_binary_tree = Node (1, Empty, Empty)
-utop[67]> 
+utop[67]>
 
-let rec nodecount t = 
+let rec nodecount t =
      match t with
      | Empty -> 0
-     | Node (i, left_tree, right_tree) -> 
+     | Node (i, left_tree, right_tree) ->
         1 + nodecount left_tree  + nodecount right_tree;;
 
 val nodecount : int_binary_tree -> int = <fun>
@@ -500,8 +500,8 @@ utop[76]> nodecount Empty ;;
 - : int = 0
 utop[77]> nodecount (Node (1, Node (2, Empty, Empty), Node (3, Empty, Node (4, Empty, Empty))) ) ;;
 - : int = 4
-utop[78]> 
+utop[78]>
 
 
 e
-===> 9월 15일 
+===> 9월 15일
