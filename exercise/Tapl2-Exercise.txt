@@ -1,0 +1,78 @@
+
+TAPL Self Exercises
+
+
+===================================================================================
+Name:
+Student ID:
+===================================================================================
+
+
+Study the following topics in the textbook.
+
+ - Sets
+
+ - Relations
+
+ - Functions
+
+ - Sequences
+
+ - Proof by induction
+
+   : (weak) induction
+   : strong induction
+
+
+===================================================================================
+
+Exercises
+
+(Relation-1)
+
+ Assume a graph G=(V,E) where V is a set of vertices and E is a set of
+ directed ediges among them.
+
+ - E can be regarded as a relation on V. Let us call it EDGE. 
+
+   Explain briefly why EDGE is a relation. (cf. Refer to the
+   definition of relations)
+
+
+ - A relation, REACHABLE, is a set of pairs (vi, vj) such that there
+   exists a path from vi to vj through some of the edges.
+
+   Define REACHABLE using EDGE.
+
+
+ - A (v-parameterized) predicate, REACHABLEFROMᵥ, is a predicate to
+   see if a node w is reachable from the node v in the graph.
+
+   Given a node v, explain the predicate RECHABLEFROMᵥ is preserved by
+   the binary relation EDGE on V. (cf. Refer to the definition of
+   'preserved by')
+
+
+
+(Induction-1) 
+
+ Given Pⱼ : Σ_{i=0,...,j} i  = j(j+2)/2.  
+ Show Pⱼ is true for all j ∈ Natural numbers.
+
+[SOLUTION]
+
+
+
+
+(Induction-2) 
+ 
+ Show that any positive number integer n ≥ 2 is either a prime number
+ or a product of prime numbers.
+
+[SOLUTION]
+
+
+
+
+
+
