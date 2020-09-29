@@ -1,0 +1,133 @@
+
+
+2. Mathematical preliminaries
+
+
+2.1 Sets, relations, and functions
+
+
+P(S): the powerset of S is the set of all 
+      the subsets of S.
+      (멱집합)
+
+e.g.,
+  P( { 1,2,3 } )
+   = { {}, {1}, {2}, {3}, {1,2}, {1,3}, {2,3}, {1,2,3}  }
+
+
+A predicate (1-place relation) on S
+
+For example, Even on a set of naturals N.
+
+ Even = { (0), (2), (4), ... }
+      = { 0, 2, 4, ... }
+      ⊆ N
+
+
+ Every predicate on S is a subset of S !!!
+
+
+ Binary relations
+
+ 3-nary relations
+
+
+Functions F on sets D and R
+ : D → R
+ : a binary relation with some restrictions
+   such that
+
+   If (x, y1) ∈ F and (x, y2) ∈ F  then y1 = y2.
+   (인자가 같으면 결과가 항상 같아야 한다.)
+
+ : D is called domain and R is called range.
+   (도메인)                (레인지)
+
+Partial functions (부분 함수: 모든 인자에 대해 결과가 정의되어 있는 것은 아닌 함수)
+
+ : For example, division is an example of  partial function
+   because a division by zero is not defined!!
+
+ : For example,
+
+    let head l =
+        match l with
+	| hd :: tl -> hd
+	| [] -> ???    // head의 결과가 정의 안됨.
+                       // 따라서, head도 partial function!!!
+
+
+Total functions (not partial functions)
+
+ : For example,
+
+    let rec length l =
+        match l with
+	| [] -> 0
+	| hd :: tl -> 1 + length tl 
+
+    // length함수는 모든 list에 대해 결과가 정의되어있음.
+    // 따라서, length는 total function!!!
+
+
+2.2 Ordered sets
+
+A binary relation R on a set S.
+
+ - R is reflexive (반사적)
+    if ∀x∈S, (x,x) ∈ R. 
+
+ - R is symmetric (대칭적)
+    if ∀x,y∈S, (x,y) ∈ R ⇒ (y,x) ∈ R.
+
+    (보충 설명)
+       P Q  P ⇒ Q (논리적 함수, logical implication)
+       ==========
+       T T    T
+       T F    F
+       F T    T    <== 헷갈리는 학생들이 많습니다!!
+       F F    T    <== 헷갈리는 학생들이 많습니다!!
+
+
+    (*)  - R이 symmetric이라고 가정.
+         - (x,y) ∉ R라고 가정해봅시다!
+         - (y,x)가 R에 포함되어 있나요 아닌가요?
+	   답) 포함되어 있을 수도 있고, 아닐 수도 있고. !!!
+
+ - R is transitive
+    if ∀x,y,z ∈ S, [ (x,y) ∈ R ∧ (y,z) ∧ R ] ⇒  (x,z) ∈ R.
+
+    (*) 모든 x,y,z에 대해서 성립해야합니다!
+
+R is an equivalence relations on S
+   if it is reflexive, symmetric, and transtivie. 
+
+
+Given a binary relation R on S,
+we study how to compute
+ - the reflexvie closure of R and
+ - the transitive closure of R.
+
+(S에 관한 이진 관계 R이 주어졌을 때,
+R의 반사적 내포와 추이적 내포를 구하는 방법)
+
+The reflexive closure of R    (R on S)
+  : R ∪ { (s,s) | s ∈ S } 
+
+    ===> becomes reflexive!!
+
+The transtive closure of R    (R on S)
+  : R⁺ = ⋃ᵢ Rᵢ = R₀ ∪ R₁ ∪ R₂ ∪ ...
+
+    R₀ = R
+    R_{i+1} = Rᵢ ∪ { (s,u) | (s,t) ∈ Rᵢ and (t,u) ∈ Rᵢ }
+
+    e.g.,
+      R₁ = R₀ ∪ { (s,u) | (s,t) ∈ R₀ and (t,u) ∈ R₀ }
+      R₂ = R₁ ∪ { (s,u) | (s,t) ∈ R₁ and (t,u) ∈ R₁ }
+        ...
+
+The reflexive and transtive clsoure of R
+  : R^*
+
+
