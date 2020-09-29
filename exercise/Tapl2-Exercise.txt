@@ -28,41 +28,57 @@ Study the following topics in the textbook.
 
 Exercises
 
+ Assume a graph G=(V,E) where V is a set of vertices and E is a set of
+ directed edges among them.
+
+ (Hint: Use an example of directed graph to try to develop an idea for
+        solving the following problems and then generalized the idea.)
+
+
 (Relation-1)
 
- Assume a graph G=(V,E) where V is a set of vertices and E is a set of
- directed ediges among them.
-
- (1) E can be regarded as a binary relation on V. Let us call the
+ - E can be regarded as a binary relation on V. Let us call the
      relation EDGE.
 
-     - Explain briefly why EDGE is a binary relation. (cf. Refer to the
-       definition of relations)
+ - Explain briefly why E is a binary relation.
+
+   (cf. Refer to the definition of relations)
+
+ [SOLUTION]
+
+
+
+
+(Relation-2)
+ - Given a node v, A (v-parameterized) predicate, REACHABLEFROMᵥ, is
+   a predicate to see if a node w is reachable from the node v in
+   the graph through zero or more edges.
+
+ - Define REACHABLEFROMᵥ using EDGE.
+
+ [SOLUTION]
+
+
+
+
+(Relation-3)
+
+ - Given a node v, explain that the predicate RECHABLEFROMᵥ is
+   preserved by the binary relation EDGE on V.
+
+   (cf. Refer to the definition of 'preserved by')
 
 [SOLUTION]
 
 
 
- (2) Given a node v, A (v-parameterized) predicate, REACHABLEFROMᵥ, is
-     a predicate to see if a node w is reachable from the node v in
-     the graph through zero or more edges.
 
-     - Define REACHABLEFROMᵥ using EDGE.
-[SOLUTION]
+(Set-1)
 
+ (1) Define a cycle in a graph as a set.
 
+ [SOLUTION]
 
-     - Explain the predicate RECHABLEFROMᵥ is preserved by
-       the binary relation EDGE on V. (cf. Refer to the definition of
-       'preserved by')
-
-[SOLUTION]
-
-
-
-
- (Hint: Use an example of directed graph to try to solve the problem
-        and then generalized the idea. )
 
 
 
