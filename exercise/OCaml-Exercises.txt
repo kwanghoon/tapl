@@ -25,7 +25,7 @@ Study the following topics in the guided tour
 
    - let rec
 
- 7) recrods and variants
+ 7) records and variants
 
  8) arrays
 
