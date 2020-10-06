@@ -1,0 +1,539 @@
+\documentclass[table]{beamer}
+
+\usepackage{kotex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\ifxetex
+ \setsansfont{TeX Gyre Heros}
+ \setsanshangulfont{맑은 고딕}
+\fi
+\usepackage{color, colortbl}					%tabular에서 rowcolor를 변경하기 위해서..
+\usepackage{fancybox}
+\usepackage{graphbox,graphicx}
+\usepackage{tikz}								%오버레이에 그림을 그리기 위해서..
+\usepackage{hyperref}							%하이퍼링크 처리
+
+\usepackage{array}
+\usepackage{ebproof}
+\usepackage{multirow}
+
+
+\usepackage{xcolor,multirow}
+\usepackage{hhline}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{listings}							%자바 코드를 위해서..
+\lstset{
+	mathescape,
+	language=Java,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle={}, % \footnotesize\color{blue}\ttfamily,
+	captionpos=b,
+	escapeinside=@@,
+	showstringspaces=false,					%공백 문제 제거를 위해서
+	tabsize=2,
+	upquote=true
+}
+
+\usepackage{fdsymbol}
+
+%----------------- 총 페이지수에서 백업 슬라이드를 제거하기 위해서....
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}} 
+}
+%-----------------
+
+%---------------- tabular에서 rowcolor를 변경하기 위해서..
+\definecolor{Gray}{gray}{0.9}
+%-----------------
+
+%\usetheme{CambridgeUS}
+% \usecolortheme{default}
+
+\usetheme{default}
+\usecolortheme{default}
+
+%\usetheme{default}
+%\usecolortheme{beaver}
+%\usetheme{CambridgeUS}
+%\usecolortheme{seagull}
+
+%\useinnertheme{rectangles}
+
+
+\setbeamertemplate{caption}{\insertcaption}	%그림의 캡션 자동 만들지 않도록.
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
+\title[Types and Programming Languages]{2. Mathematical Preliminaries \\
+(Types and Programming Languages)}
+\author[K. Choi]{Kwanghoon Choi}
+\institute[Chonnam National University]{
+Software Languages and Systems Laboratory \\
+	Chonnam National University}
+\date{Week 2}
+
+%%%%% Macros %%%%%
+
+\newcommand{\rpc}{$\lambda_{rpc}$}
+\newcommand{\polyrpc}{$\lambda_{rpc}^{\forall}$}
+\newcommand{\stateencrpc}{$\lambda_{rpc}^{enc}$}
+\newcommand{\statefulrpc}{$\lambda_{rpc}^{state}$}
+
+\newcommand{\cs}{$\lambda_{cs}$}
+\newcommand{\stateenccs}{$\lambda_{cs}^{enc}$}
+\newcommand{\statefulcs}{$\lambda_{cs}^{state}$}
+
+\newcommand{\client}{\textbf{c}}
+\newcommand{\server}{\textbf{s}}
+\newcommand{\clientserver}{\textbf{cs}}
+
+\newcommand{\Loc}{Loc}
+
+\newcommand{\evalRPC}[3]{#1\Downarrow_{#2}#3}
+\newcommand{\evalRPCC}[2]{#1\Downarrow_{\client}#2}
+\newcommand{\evalRPCS}[2]{#1\Downarrow_{\server}#2}
+\newcommand{\lamL}[3]{\lambda^{#1}#2.#3}
+\newcommand{\appL}[3]{#1{\ }^{#2}#3} 
+\newcommand{\subst}[2]{\{#1/#2\}}
+\newcommand{\llet}[3]{\textsf{let} \ #1 = #2 \ \textsf{in} \ #3}
+
+\newcommand{\textsfReq}{\textsf{req}}
+\newcommand{\req}[2]{\textsfReq(#1,#2)}
+\newcommand{\reqwith}[3]{\textsfReq_{#1}(#2,#3)}
+
+\newcommand{\textsfCall}{\textsf{call}}
+\newcommand{\call}[2]{\textsfCall(#1,#2)}
+\newcommand{\callwith}[3]{\textsfCall_{#1}(#2,#3)}
+
+\newcommand{\textsfRet}{\textsf{ret}}
+\newcommand{\ret}[1]{\textsfRet(#1)}
+\newcommand{\retwith}[2]{\textsfRet_{#1}(#2)}
+
+\newcommand{\funL}[1]{\xrightarrow{#1}}    
+\newcommand{\funLC}[2]{\xrightarrow[#2]{#1}}  
+\newcommand{\tyenv}{\Gamma}     
+\newcommand{\tyenvExt}[2]{\Gamma\{#1:#2\}}
+\newcommand{\tyenvExtWith}[1]{\Gamma,#1}
+% \newcommand{\typing}[4]{#1\rhd_{#2} #3 : #4}       
+\newcommand{\typing}[4]{#1\vdash_{#2} #3 : #4}       
+\newcommand{\typingBlack}[4]{#1\blacktriangleright_{#2} #3 : #4}  
+
+\newcommand{\loceta}[2]{{#1}\rightsquigarrow{#2}}                                         
+
+\newcommand{\enc}{\textsf{enc}}
+\newcommand{\evalStateEncRPCC}[2]{$#1\Downarrow_{\client}^{\enc}#2$}
+\newcommand{\evalStateEncRPCS}[3]{$#1;#2\Downarrow_{\server}^{\enc}#3$}
+
+\newcommand{\sta}{\textsf{state}}
+\newcommand{\evalStatefulRPCC}[3]{\evalStatefulRPC{#1}{#2}{\client}{#3}}
+\newcommand{\evalStatefulRPCS}[3]{\evalStatefulRPC{#1}{#2}{\server}{#3}}
+\newcommand{\evalStatefulRPC}[4]{${#1};{#2}\Downarrow_{#3}^{\sta}{#4}$}
+
+\newcommand{\deep}{\textsf{deep}}
+\newcommand{\evalDeeplyStatefulRPCC}[3]{\evalDeeplyStatefulRPC{#1}{#2}{\client}{#3}}
+\newcommand{\evalDeeplyStatefulRPCS}[3]{\evalDeeplyStatefulRPC{#1}{#2}{\server}{#3}}
+\newcommand{\evalDeeplyStatefulRPC}[4]{${#1};{#2}\Downarrow_{#3}^{\deep}{#4}$}
+
+\newcommand{\IdK}{\textsf{Id}}
+\newcommand{\FunK}[3]{\textsf{Fun} \ #2 \ #3}
+\newcommand{\AppK}[3]{\textsf{App} \ #2 \ #3}
+%\newcommand{\FunK}[3]{\textsf{Fun}^{#1} \ #2 \ #3}
+%\newcommand{\AppK}[3]{\textsf{App}^{#1} \ #2 \ #3}
+                                                
+\newcommand{\reify}[1]{\ulcorner #1 \urcorner}
+
+\newcommand{\RightarrowEnc}{\Rightarrow^{enc}}
+\newcommand{\RightarrowEncStar}{\Rightarrow^{enc*}}
+\newcommand{\RightarrowEncPlus}{\Rightarrow^{enc+}}
+
+\newcommand{\runStateEncRPC}[2]{$#1 \RightarrowEnc #2$}
+\newcommand{\runStateEncRPCStar}[2]{$#1 \RightarrowEncStar #2$}
+\newcommand{\runStateEncRPCPlus}[2]{$#1 \RightarrowEncPlus #2$}
+
+\newcommand{\runStateEncCS}[2]{$#1 \Rightarrow^{enc} #2$}
+\newcommand{\runStateEncCSStar}[2]{$#1 \Rightarrow^{enc*} #2$}
+
+\newcommand{\runStatefulRPC}[2]{$#1 \Rightarrow^{state} #2$}
+\newcommand{\runStatefulRPCStar}[2]{$#1 \Rightarrow^{state*} #2$}
+
+\newcommand{\runStatefulCS}[2]{$#1 \Rightarrow^{state} #2$}
+\newcommand{\runStatefulCSStar}[2]{$#1 \Rightarrow^{state*} #2$}
+
+\newcommand{\emp}{\epsilon}
+\newcommand{\substzsxs}{\{\bar{v}/\bar{z},\overline{w}/\bar{x} \}}
+\newcommand{\substxs}{\{\overline{w}/\bar{x} \}}
+
+\newcommand{\substZsXs}{\{\overline{V}/\bar{z},\overline{W}/\bar{x} \}}
+\newcommand{\substXs}{\{\overline{W}/\bar{x} \}}
+
+\newcommand{\LetK}[2]{\textsf{ctx}\ #1 \ #2}
+%\newcommand{\LetK}[2]{(#1,#2)}
+\newcommand{\opt}[1]{#1_{opt}}
+
+\newcommand{\overlineK}{\overline{K}}
+\newcommand{\overlinePi}{\overline{\Pi}}
+\newcommand{\overlineDelta}{\overline{\Delta}}
+
+%\newcommand{\comp}[1]{\rightsquigarrow_{#1}}
+%\newcommand{\comps}{\rightsquigarrow_{\server}}
+%\newcommand{\compc}{\rightsquigarrow_{\client}}
+\newcommand{\ccomp}[1]{C[\![#1]\!]}
+\newcommand{\scomp}[1]{S[\![#1]\!]}
+\newcommand{\vcomp}[1]{V[\![#1]\!]}
+\newcommand{\cconv}[1]{CC[\![#1]\!]}
+%\newcommand{\cconvprg}[1]{CC_{prg}[\![#1]\!]}
+
+\newcommand{\FUNS}{\Phi}
+\newcommand{\fv}[1]{\textsf{fv}(#1)}
+\newcommand{\dom}[1]{\textsf{dom}(#1)}
+\newcommand{\clo}[2]{clo({#1},{#2})}
+
+\newcommand{\sessionNothing}{\makebox[0.3cm][c]{\scriptsize $nothing$}}
+\newcommand{\sessionSomething}{\makebox[0.3cm][c]{\scriptsize $session$}}
+\newcommand{\sessionOption}{\makebox[0.3cm][c]{\scriptsize $optSession$}}
+
+\newcommand{\mono}[1]{[\![#1]\!]}
+
+\newcommand{\eqdef}{\overset{\mathrm{def}}{=\joinrel=}}
+
+%%
+%\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{fact}{Fact}[section]
+%\newtheorem{definition}{Definition}[section]
+
+%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%\section{Relative Pronoun}
+\begin{frame}
+%\begin{center}
+%{\footnotesize
+%Types and Programming Languages
+%}
+%\end{center}
+	\titlepage
+	
+%	\begin{center}
+%	{
+%  (Joint work with James Cheney, Simon Fowler, and Sam Lindley)
+%	}
+%	\end{center}
+\end{frame}
+
+%\begin{frame}{Table of Contents}
+%\begin{itemize}
+%\item
+%\item
+%\item
+%\item
+%\end{itemize}
+%\end{frame}
+
+%%%
+\begin{frame}[t]{2.1 Sets, Relations, and Functions: Sets} \vspace{10pt}
+
+Standard notation for sets 
+\begin{itemize}
+\item by enumeration, e.g., as $\{ \ 0, 2, 4, 6, \cdots  \ \}$, or 
+\item by {\it comprehension}, e.g., as $\{ x \in \mathbb{N} \ | \ x \ is \ even \}$ where $\mathbb{N}$ is the set of natural numbers $\{0,1,2,3,\cdots\}$.
+\end{itemize}
+
+\vspace{10pt}
+
+$\emptyset$ for the empty set
+\vspace{10pt}
+
+$S \backslash T$ for the set difference of $S$ and $T$
+\vspace{10pt}
+
+$|S|$ for the size of a set S
+\vspace{10pt}
+
+$\mathcal{P}(S)$ for the powerset of S, i.e., the set of all the subsets of $S$. 
+
+\begin{itemize}
+\item Q. $\mathcal{P}(\{1,2,3\}) = $
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.1 Sets, Relations, and Functions: Relations} \vspace{10pt}
+
+{\color{red} An $n$-place {\it relation} over sets $S_1$, $S_2$, ... , $S_n$} is a set $R\subseteq S_1\times S_2 \times \cdots \times S_n$ of tuples of elements from $S_1$ through $S_n$. 
+\begin{itemize}
+\item We say that the elements $s_1\in S_1$ through $s_n\in S_n$ are {\it \color{red} related by $R$} if the tuple $(s_1, \cdots, s_n) \in R$. 
+\end{itemize}
+
+\vspace{10pt}
+
+Q. By $MyRelation = \{ (1,2), (2,4), (3,6), (4,8), (5,10), \cdots \}$, how the elements are related?
+
+\vspace{10pt}
+
+Q. Define your relation and explain how elements are related by your relation?
+
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.1 Sets, Relations, and Functions: Relations} % \vspace{10pt}
+
+A 1-place relation on a set S is called {\it \color{red} a predicate on $S$}. 
+\begin{itemize}
+\item $Even=\{(0),(2),(4),\cdots\}\simeq\{0,2,4,\cdots\}\subseteq \mathbb{N}$ is a relation.
+\item $Even$ is regarded as a predicate on $\mathbb{N}$ as $Even(elem)$ is true iff $elem\in Even$. E.g., $Even(2)$ is true, $Even(3)$ is false, and so on.
+\end{itemize}
+
+\vspace{10pt}
+
+A 2-place relation on $S$ and $T$ is called {\it \color{red} a binary relation}. We often write {\color{red} $s \ R \ t$} instead of $(s,t)\in R$.
+
+\vspace{10pt}
+
+A 2-place relation on the same sets $S$ and $S$ is simply called {\it \color{red} a binary relation on $S$}.
+
+\vspace{10pt}
+
+{\color{red} For readability}, three- or more place relations are often written using a ``mixfix'' concrete syntax. For example,
+for the typing relation for the simply typed lambda calculus in Ch.9, we write {\color{red} $\tyenv \vdash s : T$} to mean ``the triple $(\tyenv,s,T)$ is in the typing relation.'' \\
+E.g., $(x:int, x+1, int) \in TypeSystem$ but $(x:bool, x+1, ?) \not\in TypeSystem$
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.1 Sets, Relations, and Functions: Functions} \vspace{10pt}
+
+Suppose a relation $R$ on sets $S$ and $T$. The {\it \color{red} domain} of $R$, written $dom(R)$, is $\{ s \ | \ (s,t)\in R\}$, and the {\it \color{red} range} of $R$, written $range(R)$, is $\{ t \ | \ (s,t)\in R\}$. E.g., $dom(MyRelation)$ and $range(MyRelation)$. 
+
+\vspace{10pt}
+
+Such a relation $R$ is called a {\it \color{red} (partial) function} from $S$ to $T$ if $(s,t_1)\in R$ and $(s,t_2)\in R$, we have $t_1 = t_2$. 
+
+\vspace{10pt}
+
+Such a relation $R$ is called a {\it \color{red} total function} if $R$ is a partial function and $dom(R)=S$. 
+
+\vspace{10pt}
+
+A partial function $R$ is is {\it defined} on $s$ if $s \in dom(R)$, which is denoted by {\color{red} $R(x) \downarrow$}. Otherewise it is {undefined}, denoted by {\color{red} $R(x) \uparrow$}.
+
+\vspace{10pt}
+
+Q. Show an example of a partial function that is not a total one.
+
+\end{frame}
+
+
+%%%
+\begin{frame}[t]{2.2 Ordered Sets} % \vspace{10pt}
+
+Suppose a binary relation $R$ on a set $S$. 
+
+\vspace{10pt}
+
+Q. Find out three definitions that $R$ is {\it reflexive}, $R$ is {\it symmetric}, and $R$ is {\it transitive}, respectively. 
+
+\vspace{10pt}
+
+$R$ is an {\it equivalence} on $S$ if it is reflexive, symmetric, and transitive. 
+
+\vspace{10pt}
+
+The {\it reflexive closure} of $R$ is $R \cup \{ (s,s) \ | \ s \in S \}$.
+
+\vspace{10pt}
+
+The {\it transitive closure} of $R$ is $R^+= \bigcup_i R_i$ where 
+\begin{eqnarray*}
+R_0 & = & R \\
+R_{i+1} & = & R_i \cup \{ (s,u) \ | \ (s,t) \in R_i and (t,u) \in R_i \ for \ some \ t \ \}
+\end{eqnarray*}
+
+%\vspace{10pt}
+
+The {\it reflexive and transitive closure} of $R$ is $R^*$.
+
+\vspace{10pt}
+
+Q. $MyRelation^*$
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.2 Ordered Sets} \vspace{10pt}
+
+A predicate $P$ on a set $S$ is {\it \color{red} preserved by} a binary relation $R$ on $S$
+\begin{eqnarray*}
+P & : & S\\
+R & : & S \times S 
+\end{eqnarray*}
+for all $s_1 \ R \ s_2$, if $\mathcal{P}(s_1)$ then $\mathcal{P}(s_2)$.
+\vspace{10pt}
+
+Q. Show a concrete example of $P$ and $S$. 
+
+\vspace{10pt}
+
+Q. Show that if $P$ is preserved by $R$, then $P$ is also preserved by $R^*$. 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.3 Sequences} \vspace{10pt}
+
+A {\it \color{red} sequence} is written by listing its elements, separated by commas, such as 1,2,3.
+
+\vspace{10pt}
+
+Suppose $a$ is 3,2,1 and $b$ is 5,6.
+\begin{itemize}
+\item 0,a denotes 0,3,2,1
+\item a,0 denotes 3,2,1,0
+\item b,a denotes 5,6,3,2,1
+\end{itemize}
+
+\vspace{10pt}
+
+1..$n$ is the sequence of numbers from 1 to $n$
+
+\vspace{10pt}
+
+$|a|$ is the length of the sequence $a$. 
+
+\vspace{10pt}
+
+The empty sequence is written either as $\bullet$ or as a blank. 
+
+\vspace{10pt}
+
+Q. Write down all {\it \color{red} permutation}s of the sequence 1,2,3. 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.4 Induction} \vspace{10pt}
+
+To prove the infinite cases of a predicate, principles of induction may be useful.
+
+\vspace{10pt}
+
+
+[{\it \color{red} Principle of Induction on Natural Numbers}]
+Suppose a predicate $\mathcal{P}$ on the natural numbers $\mathbb{N}$. 
+\begin{itemize}
+\item[] If $\mathcal{P}(0)$
+\item[] and, for all $i\in \mathbb{N}$, $\mathcal{P}(i)$ implies $\mathcal{P}(i+1)$,
+\item[] then $\mathcal{P}(n)$ is true for all $n \in \mathbb{N}$.
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.4 Induction} 
+
+To prove ``infinite cases'', {\it principles of induction} may be useful.
+
+\vspace{10pt}
+
+Q. Let $\mathcal{P}_j\ \triangleeq \ \sum_{i=0}^j i = \frac{j(j+1)}{2}$.  
+	We want to show $\mathcal{P}_j$ is true for all $j\in\mathbb{N}$.
+\begin{itemize}
+\item[1] (Base case) Prove $\mathcal{P}_0$ is true.
+\item[2-1] Assume $\mathcal{P}_4$ is true. Then show $\mathcal{P}_5$ is provable using the assumption.
+\item[2-2] (Inductive case) Generalize (2-1). Assume $\mathcal{P}_k$ is true for an arbitrary natural number $k$. Then show $\mathcal{P}_{k+1}$ is true using the assumption.
+\item[3] Verify you have proved $\mathcal{P}_j$ for all (infinite cases) $j\in\mathbb{N}$ by (1) and (2-2). 
+\end{itemize}
+%\[
+%\mathcal{P} = \left\{ k  \in \mathbb{N} \ | \ \sum_{i=0}^k i = \frac{k(k+1)}{2} \ is \ true \right\}
+%\]. In other words, $\mathcal{P}(n) = \ \ \left( \sum_{i=0}^n i = \frac{n(n+1)}{2}\right) $ for all $n\in \mathbb{N}$.
+%\begin{itemize}
+%\item Prove $\sum_{i=0}^n i = \frac{n(n+1)}{2}$ for all $n\in\mathbb{N}$ by the principle of induction on natural numbers.
+%\end{itemize}
+
+\vspace{10pt}
+
+It is enough to prove the base and the inductive cases rather than to prove the infinite ones!
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.4 Induction} \vspace{10pt}
+
+[{\it \color{red} Principle of Induction on Natural Numbers}]
+Suppose a predicate $\mathcal{P}$ on the natural numbers $\mathbb{N}$. 
+\begin{itemize}
+\item[] If $\mathcal{P}(0)$
+\item[] and, for all $i\in \mathbb{N}$, $\mathcal{P}(i)$ implies $\mathcal{P}(i+1)$,
+\item[] then $\mathcal{P}(n)$ is true for all $n \in \mathbb{N}$.
+\end{itemize}
+
+\vspace{10pt}
+
+Q. Explain why a proof in the previous exercise can be viewed as the principle of induction.
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.4 Induction}
+
+Sometimes we need another principle stronger than the ``plain'' principle of induction. 
+
+\vspace{10pt}
+
+Q. We want to show that any positive number integer $n$ greater than or equal to 2 is either a prime or a product of primes.
+
+\begin{itemize}
+\item Let $\mathcal{P}_j$ be either $j$ is a prime or $j$ is a product of primes.
+\item[1] (Base case) Show $\mathcal{P}_2$ is true.
+\item[2-1] Assume $\mathcal{P}_{16}$ and $\mathcal{P}_{64}$ are true. Then show $\mathcal{P}_{1024}$ is provable using the assumptions.
+\item[2-2] (Inductive case) Generalize (2-1). Assume $\mathcal{P}_i$ is true for an arbitrary natural number $i\leq k$. Then show $\mathcal{P}_{k+1}$ is true using the assumptions.
+\item[3] Verify you have proved $\mathcal{P}_j$ for all (infinite cases) $2\leq j$ by (1) and (2-2).
+\end{itemize}
+
+\vspace{10pt}
+
+To prove $\mathcal{P}_{k+1}$, not only we may need $\mathcal{P}_{k}$ but we may also need more as: $\mathcal{P}_k$, $\mathcal{P}_{k-1}$, $\mathcal{P}_{k-2}$, $\mathcal{P}_{k-3}$, ... , $\mathcal{P}_{2}$.
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{2.4 Induction} \vspace{10pt}
+
+[{\it \color{red} Principle of the complete induction on Natural Numbers}]
+Suppose a predicate $\mathcal{P}$ on the natural numbers $\mathbb{N}$. 
+\begin{itemize}
+\item[] If $\mathcal{P}(0)$
+\item[] and, for all $i\in \mathbb{N}$, {\color{red} $\mathcal{P}(j)$ for all $j\leq i$} implies $\mathcal{P}(i+1)$,
+\item[] then $\mathcal{P}(n)$ is true for all $n \in \mathbb{N}$.
+\end{itemize}
+
+\vspace{10pt}
+
+More induction principles exist, for example, as
+\begin{itemize}
+\item the principle of lexicographic induction 
+\item the principle of structural induction
+\end{itemize}
+
+\end{frame}
+
+
+
+\end{document}
+
