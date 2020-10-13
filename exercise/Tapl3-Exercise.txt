@@ -1,0 +1,92 @@
+
+TAPL Self Exercises
+
+
+===================================================================================
+Name:
+Student ID:
+===================================================================================
+
+
+Study the following topics in the textbook.
+
+ - Syntax of terms
+ 
+   : Proof by induction over terms
+
+ - Semantics by evaluation rules
+
+   : Proof by induction over evaluation rules
+
+
+===================================================================================
+
+Exercises
+
+(Syntax by inductive definition)
+
+ Assume the syntax of airthmetic PL (Slide 5). Calculate S_2.  
+
+ [SOLUTION]
+
+
+
+
+(Induction over terms)
+
+ Prove that the number of distinct constants in a term t is no greater than
+ the size of t (i.e., |Const(t)| <= size(t) )
+
+  - Proof by induction on the depth of t.
+
+ [SOLUTION]
+
+
+
+
+(Evaluation rules-1 : Evaluation)
+
+Evaluate the following terms using the semantics rules. 
+
+ - pred (succ (pred 0))
+
+
+ - if (iszero (pred (succ 0))) then succ zero else pred zero
+
+
+ [SOLUTION]
+
+
+
+
+(Evaluation rules-2 : Getting stuck)
+
+Make up an example of terms that will get stuck. 
+
+ [SOLUTION]
+
+
+
+
+
+
+(Induction over evaluation rules)
+
+ Assume the arithmetic PL (the syntax in Slide P.28 and the semantics in Slide P.29),
+ Prove t -> t1 and t -> t2 or show a counter example.
+
+ [SOLUTION]
+
+
+
+
+
+(OCaml implementation of Arith PL)
+
+ Play with an OCaml implementation of the Arithmetice PL available in arith.
+
+ [No solution is required]
+
+
+
+ 
