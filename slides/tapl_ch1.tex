@@ -1,0 +1,424 @@
+\documentclass[table]{beamer}
+
+\usepackage{kotex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\ifxetex
+ \setsansfont{TeX Gyre Heros}
+ \setsanshangulfont{맑은 고딕}
+\fi
+\usepackage{color, colortbl}					%tabular에서 rowcolor를 변경하기 위해서..
+\usepackage{fancybox}
+\usepackage{graphbox,graphicx}
+\usepackage{tikz}								%오버레이에 그림을 그리기 위해서..
+\usepackage{hyperref}							%하이퍼링크 처리
+
+\usepackage{array}
+\usepackage{ebproof}
+\usepackage{multirow}
+
+
+\usepackage{xcolor,multirow}
+\usepackage{hhline}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{listings}							%자바 코드를 위해서..
+\lstset{
+	mathescape,
+	language=Java,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle={}, % \footnotesize\color{blue}\ttfamily,
+	captionpos=b,
+	escapeinside=@@,
+	showstringspaces=false,					%공백 문제 제거를 위해서
+	tabsize=2,
+	upquote=true
+}
+
+%----------------- 총 페이지수에서 백업 슬라이드를 제거하기 위해서....
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}} 
+}
+%-----------------
+
+%---------------- tabular에서 rowcolor를 변경하기 위해서..
+\definecolor{Gray}{gray}{0.9}
+%-----------------
+
+%\usetheme{CambridgeUS}
+% \usecolortheme{default}
+
+\usetheme{default}
+\usecolortheme{default}
+
+%\usetheme{default}
+%\usecolortheme{beaver}
+%\usetheme{CambridgeUS}
+%\usecolortheme{seagull}
+
+%\useinnertheme{rectangles}
+
+
+\setbeamertemplate{caption}{\insertcaption}	%그림의 캡션 자동 만들지 않도록.
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
+\title[Types and Programming Languages]{1. Introduction \\
+(Types and Programming Languages)}
+\author[K. Choi]{Kwanghoon Choi}
+\institute[Chonnam National University]{
+Software Languages and Systems Laboratory \\
+	Chonnam National University}
+\date{Week 1}
+
+%%%%% Macros %%%%%
+
+\newcommand{\rpc}{$\lambda_{rpc}$}
+\newcommand{\polyrpc}{$\lambda_{rpc}^{\forall}$}
+\newcommand{\stateencrpc}{$\lambda_{rpc}^{enc}$}
+\newcommand{\statefulrpc}{$\lambda_{rpc}^{state}$}
+
+\newcommand{\cs}{$\lambda_{cs}$}
+\newcommand{\stateenccs}{$\lambda_{cs}^{enc}$}
+\newcommand{\statefulcs}{$\lambda_{cs}^{state}$}
+
+\newcommand{\client}{\textbf{c}}
+\newcommand{\server}{\textbf{s}}
+\newcommand{\clientserver}{\textbf{cs}}
+
+\newcommand{\Loc}{Loc}
+
+\newcommand{\evalRPC}[3]{#1\Downarrow_{#2}#3}
+\newcommand{\evalRPCC}[2]{#1\Downarrow_{\client}#2}
+\newcommand{\evalRPCS}[2]{#1\Downarrow_{\server}#2}
+\newcommand{\lamL}[3]{\lambda^{#1}#2.#3}
+\newcommand{\appL}[3]{#1{\ }^{#2}#3} 
+\newcommand{\subst}[2]{\{#1/#2\}}
+\newcommand{\llet}[3]{\textsf{let} \ #1 = #2 \ \textsf{in} \ #3}
+
+\newcommand{\textsfReq}{\textsf{req}}
+\newcommand{\req}[2]{\textsfReq(#1,#2)}
+\newcommand{\reqwith}[3]{\textsfReq_{#1}(#2,#3)}
+
+\newcommand{\textsfCall}{\textsf{call}}
+\newcommand{\call}[2]{\textsfCall(#1,#2)}
+\newcommand{\callwith}[3]{\textsfCall_{#1}(#2,#3)}
+
+\newcommand{\textsfRet}{\textsf{ret}}
+\newcommand{\ret}[1]{\textsfRet(#1)}
+\newcommand{\retwith}[2]{\textsfRet_{#1}(#2)}
+
+\newcommand{\funL}[1]{\xrightarrow{#1}}    
+\newcommand{\funLC}[2]{\xrightarrow[#2]{#1}}  
+\newcommand{\tyenv}{\Gamma}     
+\newcommand{\tyenvExt}[2]{\Gamma\{#1:#2\}}
+\newcommand{\tyenvExtWith}[1]{\Gamma,#1}
+% \newcommand{\typing}[4]{#1\rhd_{#2} #3 : #4}       
+\newcommand{\typing}[4]{#1\vdash_{#2} #3 : #4}       
+\newcommand{\typingBlack}[4]{#1\blacktriangleright_{#2} #3 : #4}  
+
+\newcommand{\loceta}[2]{{#1}\rightsquigarrow{#2}}                                         
+
+\newcommand{\enc}{\textsf{enc}}
+\newcommand{\evalStateEncRPCC}[2]{$#1\Downarrow_{\client}^{\enc}#2$}
+\newcommand{\evalStateEncRPCS}[3]{$#1;#2\Downarrow_{\server}^{\enc}#3$}
+
+\newcommand{\sta}{\textsf{state}}
+\newcommand{\evalStatefulRPCC}[3]{\evalStatefulRPC{#1}{#2}{\client}{#3}}
+\newcommand{\evalStatefulRPCS}[3]{\evalStatefulRPC{#1}{#2}{\server}{#3}}
+\newcommand{\evalStatefulRPC}[4]{${#1};{#2}\Downarrow_{#3}^{\sta}{#4}$}
+
+\newcommand{\deep}{\textsf{deep}}
+\newcommand{\evalDeeplyStatefulRPCC}[3]{\evalDeeplyStatefulRPC{#1}{#2}{\client}{#3}}
+\newcommand{\evalDeeplyStatefulRPCS}[3]{\evalDeeplyStatefulRPC{#1}{#2}{\server}{#3}}
+\newcommand{\evalDeeplyStatefulRPC}[4]{${#1};{#2}\Downarrow_{#3}^{\deep}{#4}$}
+
+\newcommand{\IdK}{\textsf{Id}}
+\newcommand{\FunK}[3]{\textsf{Fun} \ #2 \ #3}
+\newcommand{\AppK}[3]{\textsf{App} \ #2 \ #3}
+%\newcommand{\FunK}[3]{\textsf{Fun}^{#1} \ #2 \ #3}
+%\newcommand{\AppK}[3]{\textsf{App}^{#1} \ #2 \ #3}
+                                                
+\newcommand{\reify}[1]{\ulcorner #1 \urcorner}
+
+\newcommand{\RightarrowEnc}{\Rightarrow^{enc}}
+\newcommand{\RightarrowEncStar}{\Rightarrow^{enc*}}
+\newcommand{\RightarrowEncPlus}{\Rightarrow^{enc+}}
+
+\newcommand{\runStateEncRPC}[2]{$#1 \RightarrowEnc #2$}
+\newcommand{\runStateEncRPCStar}[2]{$#1 \RightarrowEncStar #2$}
+\newcommand{\runStateEncRPCPlus}[2]{$#1 \RightarrowEncPlus #2$}
+
+\newcommand{\runStateEncCS}[2]{$#1 \Rightarrow^{enc} #2$}
+\newcommand{\runStateEncCSStar}[2]{$#1 \Rightarrow^{enc*} #2$}
+
+\newcommand{\runStatefulRPC}[2]{$#1 \Rightarrow^{state} #2$}
+\newcommand{\runStatefulRPCStar}[2]{$#1 \Rightarrow^{state*} #2$}
+
+\newcommand{\runStatefulCS}[2]{$#1 \Rightarrow^{state} #2$}
+\newcommand{\runStatefulCSStar}[2]{$#1 \Rightarrow^{state*} #2$}
+
+\newcommand{\emp}{\epsilon}
+\newcommand{\substzsxs}{\{\bar{v}/\bar{z},\overline{w}/\bar{x} \}}
+\newcommand{\substxs}{\{\overline{w}/\bar{x} \}}
+
+\newcommand{\substZsXs}{\{\overline{V}/\bar{z},\overline{W}/\bar{x} \}}
+\newcommand{\substXs}{\{\overline{W}/\bar{x} \}}
+
+\newcommand{\LetK}[2]{\textsf{ctx}\ #1 \ #2}
+%\newcommand{\LetK}[2]{(#1,#2)}
+\newcommand{\opt}[1]{#1_{opt}}
+
+\newcommand{\overlineK}{\overline{K}}
+\newcommand{\overlinePi}{\overline{\Pi}}
+\newcommand{\overlineDelta}{\overline{\Delta}}
+
+%\newcommand{\comp}[1]{\rightsquigarrow_{#1}}
+%\newcommand{\comps}{\rightsquigarrow_{\server}}
+%\newcommand{\compc}{\rightsquigarrow_{\client}}
+\newcommand{\ccomp}[1]{C[\![#1]\!]}
+\newcommand{\scomp}[1]{S[\![#1]\!]}
+\newcommand{\vcomp}[1]{V[\![#1]\!]}
+\newcommand{\cconv}[1]{CC[\![#1]\!]}
+%\newcommand{\cconvprg}[1]{CC_{prg}[\![#1]\!]}
+
+\newcommand{\FUNS}{\Phi}
+\newcommand{\fv}[1]{\textsf{fv}(#1)}
+\newcommand{\dom}[1]{\textsf{dom}(#1)}
+\newcommand{\clo}[2]{clo({#1},{#2})}
+
+\newcommand{\sessionNothing}{\makebox[0.3cm][c]{\scriptsize $nothing$}}
+\newcommand{\sessionSomething}{\makebox[0.3cm][c]{\scriptsize $session$}}
+\newcommand{\sessionOption}{\makebox[0.3cm][c]{\scriptsize $optSession$}}
+
+\newcommand{\mono}[1]{[\![#1]\!]}
+
+\newcommand{\eqdef}{\overset{\mathrm{def}}{=\joinrel=}}
+
+%%
+%\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{fact}{Fact}[section]
+%\newtheorem{definition}{Definition}[section]
+
+%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%\section{Relative Pronoun}
+\begin{frame}
+%\begin{center}
+%{\footnotesize
+%Types and Programming Languages
+%}
+%\end{center}
+	\titlepage
+	
+%	\begin{center}
+%	{
+%  (Joint work with James Cheney, Simon Fowler, and Sam Lindley)
+%	}
+%	\end{center}
+\end{frame}
+
+%\begin{frame}{Table of Contents}
+%\begin{itemize}
+%\item
+%\item
+%\item
+%\item
+%\end{itemize}
+%\end{frame}
+
+\begin{frame}[t]{1.1 Background: Software Engineering} \vspace{10pt}
+
+To make software correctly work and to make it smoothly evolve are very difficult and very expensive.
+
+\vspace{10pt}
+
+Two main approaches to tame  software monsters are 
+\begin{itemize}
+\item empirical software engineering based on {\it experiences}
+
+\item {\it formal methods}  based on {\it mathematics and logics}
+
+\end{itemize}
+
+\vspace{10pt}
+
+In this class, we are interested in formal methods so called {\it type systems}. 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.1 Background: Formal Methods} \vspace{10pt}
+
+
+A broad range of {\it formal methods } in software engineering
+
+\vspace{10pt}
+
+Some powerful frameworks at one end of the spectrum
+
+\begin{itemize}
+
+\item  Hoare logic, Algebraic specification languages, Modal logics, and Denotational semantics
+
+\end{itemize}
+
+\vspace{10pt}
+
+Pros: They can express very general correctness properties 
+
+\vspace{10pt}
+
+Cons: 
+\begin{itemize}
+\item But they are often cumbersome to use and demand a good deal of sophistication on the part of programmers
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.1 Background: Formal Methods (cont.)} \vspace{10pt}
+
+A broad range of {\it formal methods } in software engineering 
+
+\vspace{10pt}
+
+{\it Lightweight formal methods} at the other end of the spectrum
+\begin{itemize}
+\item Model checkers, Run-time monitoring, {\it Type systems}, etc.
+\end{itemize}
+
+\vspace{10pt}
+
+Cons: 
+\begin{itemize}
+\item Much more modest power than the previous powerful frameworks
+\end{itemize}
+
+\vspace{10pt}
+
+Pros: 
+\begin{itemize}
+\item But modest enough that automatic checkers can be built into compilers  
+\item and thus be applied even by programmers unfamiliar with the underlying theories
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.1 Types in Computer Science} \vspace{10pt}
+
+In this class, a type system is 
+\begin{itemize}
+\item a tractable syntactic method
+\item for proving the absence of certain program behaviors 
+\item by classifying phrases according to the kinds of values they compute
+\end{itemize}
+
+ \vspace{10pt}
+ 
+ $\Rightarrow$ Type systems as tools for reasoning about programs.
+ \vspace{5pt}
+ 
+  $\Rightarrow$ Type systems as calculating a kind of {\it static approximation} to the certain {run-time behaviors of the terms}  in a program.
+  
+ \vspace{10pt}
+ 
+ But type systems (or {\it type theory}) refers to a much broader field of study in logic, mathematics, and philosophy, dating back to the early 1900s as ways of avoiding the logical paradoxes, such as Russell's. 
+ 
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.2 What Type Systems Are Good For} \vspace{10pt}
+
+Detecting errors
+
+\vspace{10pt}
+
+Abstraction
+
+\vspace{10pt}
+
+Documentation
+
+\vspace{10pt}
+
+Language safety
+
+\vspace{10pt}
+
+Efficiency
+
+\vspace{10pt}
+
+Further applications : Automated theorem proving such as with Coq, Isabelle, Agda
+\end{frame}
+
+
+%%%
+\begin{frame}[t]{1.3 Type Systems and Language Design} \vspace{10pt}
+
+Programming language design go hand in hand with type-system design
+
+\vspace{10pt}
+
+The type system itself is the foundation of the design and the organizing principle in typed programming languages
+
+\vspace{10pt}
+
+Even in untyped programming languages, they are structured in a way for which a type system can be written.
+
+\vspace{10pt}
+
+In summary, there are no programming languages without type systems!
+
+%\vspace{10pt}
+%
+%Trade-off between explicit type annotation vs. automatic type inference
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.4 Capsule History} \vspace{10pt}
+The earliest type systems to make very simple distinctions between integer and floating point representations of numbers in Fortran (1950s)
+
+\vspace{10pt}
+
+This classification was extended to structured data (arrays, records, etc.) and to higher-order functions (1960s)
+
+\vspace{10pt}
+
+A number of even richer concepts (parametric polymorphism, abstract data types, module systems, and subtyping) were introduced (1970s).
+
+\vspace{10pt}
+
+Computer scientists began to be aware of the connections between the type systems found in PLs and those studied in mathematical logic! 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.5 Related Reading} \vspace{10pt}
+
+Many useful, interesting, and mind-blowing textbooks about types and programming languages 
+
+\end{frame}
+
+\end{document}
+
+
+

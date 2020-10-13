@@ -1,0 +1,1008 @@
+\documentclass[table]{beamer}
+
+\usepackage{kotex}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{verbatim}
+\ifxetex
+ \setsansfont{TeX Gyre Heros}
+ \setsanshangulfont{맑은 고딕}
+\fi
+\usepackage{color, colortbl}					%tabular에서 rowcolor를 변경하기 위해서..
+\usepackage{fancybox}
+\usepackage{graphbox,graphicx}
+\usepackage{tikz}								%오버레이에 그림을 그리기 위해서..
+\usepackage{hyperref}							%하이퍼링크 처리
+
+\usepackage{array}
+\usepackage{ebproof}
+\usepackage{multirow}
+
+
+\usepackage{xcolor,multirow}
+\usepackage{hhline}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{listings}							%자바 코드를 위해서..
+\lstset{
+	mathescape,
+	language=Java,
+	basicstyle=\footnotesize\ttfamily,
+	keywordstyle={}, % \footnotesize\color{blue}\ttfamily,
+	captionpos=b,
+	escapeinside=@@,
+	showstringspaces=false,					%공백 문제 제거를 위해서
+	tabsize=2,
+	upquote=true
+}
+
+%----------------- 총 페이지수에서 백업 슬라이드를 제거하기 위해서....
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}} 
+}
+%-----------------
+
+%---------------- tabular에서 rowcolor를 변경하기 위해서..
+\definecolor{Gray}{gray}{0.9}
+%-----------------
+
+%\usetheme{CambridgeUS}
+% \usecolortheme{default}
+
+\usetheme{default}
+\usecolortheme{default}
+
+%\usetheme{default}
+%\usecolortheme{beaver}
+%\usetheme{CambridgeUS}
+%\usecolortheme{seagull}
+
+%\useinnertheme{rectangles}
+
+
+\setbeamertemplate{caption}{\insertcaption}	%그림의 캡션 자동 만들지 않도록.
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
+\title[Types and Programming Languages]{1. Introduction \\
+(Types and Programming Languages)}
+\author[K. Choi]{Kwanghoon Choi}
+\institute[Chonnam National University]{
+Software Languages and Systems Laboratory \\
+	Chonnam National University}
+\date{Week 1}
+
+%%%%% Macros %%%%%
+
+\newcommand{\rpc}{$\lambda_{rpc}$}
+\newcommand{\polyrpc}{$\lambda_{rpc}^{\forall}$}
+\newcommand{\stateencrpc}{$\lambda_{rpc}^{enc}$}
+\newcommand{\statefulrpc}{$\lambda_{rpc}^{state}$}
+
+\newcommand{\cs}{$\lambda_{cs}$}
+\newcommand{\stateenccs}{$\lambda_{cs}^{enc}$}
+\newcommand{\statefulcs}{$\lambda_{cs}^{state}$}
+
+\newcommand{\client}{\textbf{c}}
+\newcommand{\server}{\textbf{s}}
+\newcommand{\clientserver}{\textbf{cs}}
+
+\newcommand{\Loc}{Loc}
+
+\newcommand{\evalRPC}[3]{#1\Downarrow_{#2}#3}
+\newcommand{\evalRPCC}[2]{#1\Downarrow_{\client}#2}
+\newcommand{\evalRPCS}[2]{#1\Downarrow_{\server}#2}
+\newcommand{\lamL}[3]{\lambda^{#1}#2.#3}
+\newcommand{\appL}[3]{#1{\ }^{#2}#3} 
+\newcommand{\subst}[2]{\{#1/#2\}}
+\newcommand{\llet}[3]{\textsf{let} \ #1 = #2 \ \textsf{in} \ #3}
+
+\newcommand{\textsfReq}{\textsf{req}}
+\newcommand{\req}[2]{\textsfReq(#1,#2)}
+\newcommand{\reqwith}[3]{\textsfReq_{#1}(#2,#3)}
+
+\newcommand{\textsfCall}{\textsf{call}}
+\newcommand{\call}[2]{\textsfCall(#1,#2)}
+\newcommand{\callwith}[3]{\textsfCall_{#1}(#2,#3)}
+
+\newcommand{\textsfRet}{\textsf{ret}}
+\newcommand{\ret}[1]{\textsfRet(#1)}
+\newcommand{\retwith}[2]{\textsfRet_{#1}(#2)}
+
+\newcommand{\funL}[1]{\xrightarrow{#1}}    
+\newcommand{\funLC}[2]{\xrightarrow[#2]{#1}}  
+\newcommand{\tyenv}{\Gamma}     
+\newcommand{\tyenvExt}[2]{\Gamma\{#1:#2\}}
+\newcommand{\tyenvExtWith}[1]{\Gamma,#1}
+% \newcommand{\typing}[4]{#1\rhd_{#2} #3 : #4}       
+\newcommand{\typing}[4]{#1\vdash_{#2} #3 : #4}       
+\newcommand{\typingBlack}[4]{#1\blacktriangleright_{#2} #3 : #4}  
+
+\newcommand{\loceta}[2]{{#1}\rightsquigarrow{#2}}                                         
+
+\newcommand{\enc}{\textsf{enc}}
+\newcommand{\evalStateEncRPCC}[2]{$#1\Downarrow_{\client}^{\enc}#2$}
+\newcommand{\evalStateEncRPCS}[3]{$#1;#2\Downarrow_{\server}^{\enc}#3$}
+
+\newcommand{\sta}{\textsf{state}}
+\newcommand{\evalStatefulRPCC}[3]{\evalStatefulRPC{#1}{#2}{\client}{#3}}
+\newcommand{\evalStatefulRPCS}[3]{\evalStatefulRPC{#1}{#2}{\server}{#3}}
+\newcommand{\evalStatefulRPC}[4]{${#1};{#2}\Downarrow_{#3}^{\sta}{#4}$}
+
+\newcommand{\deep}{\textsf{deep}}
+\newcommand{\evalDeeplyStatefulRPCC}[3]{\evalDeeplyStatefulRPC{#1}{#2}{\client}{#3}}
+\newcommand{\evalDeeplyStatefulRPCS}[3]{\evalDeeplyStatefulRPC{#1}{#2}{\server}{#3}}
+\newcommand{\evalDeeplyStatefulRPC}[4]{${#1};{#2}\Downarrow_{#3}^{\deep}{#4}$}
+
+\newcommand{\IdK}{\textsf{Id}}
+\newcommand{\FunK}[3]{\textsf{Fun} \ #2 \ #3}
+\newcommand{\AppK}[3]{\textsf{App} \ #2 \ #3}
+%\newcommand{\FunK}[3]{\textsf{Fun}^{#1} \ #2 \ #3}
+%\newcommand{\AppK}[3]{\textsf{App}^{#1} \ #2 \ #3}
+                                                
+\newcommand{\reify}[1]{\ulcorner #1 \urcorner}
+
+\newcommand{\RightarrowEnc}{\Rightarrow^{enc}}
+\newcommand{\RightarrowEncStar}{\Rightarrow^{enc*}}
+\newcommand{\RightarrowEncPlus}{\Rightarrow^{enc+}}
+
+\newcommand{\runStateEncRPC}[2]{$#1 \RightarrowEnc #2$}
+\newcommand{\runStateEncRPCStar}[2]{$#1 \RightarrowEncStar #2$}
+\newcommand{\runStateEncRPCPlus}[2]{$#1 \RightarrowEncPlus #2$}
+
+\newcommand{\runStateEncCS}[2]{$#1 \Rightarrow^{enc} #2$}
+\newcommand{\runStateEncCSStar}[2]{$#1 \Rightarrow^{enc*} #2$}
+
+\newcommand{\runStatefulRPC}[2]{$#1 \Rightarrow^{state} #2$}
+\newcommand{\runStatefulRPCStar}[2]{$#1 \Rightarrow^{state*} #2$}
+
+\newcommand{\runStatefulCS}[2]{$#1 \Rightarrow^{state} #2$}
+\newcommand{\runStatefulCSStar}[2]{$#1 \Rightarrow^{state*} #2$}
+
+\newcommand{\emp}{\epsilon}
+\newcommand{\substzsxs}{\{\bar{v}/\bar{z},\overline{w}/\bar{x} \}}
+\newcommand{\substxs}{\{\overline{w}/\bar{x} \}}
+
+\newcommand{\substZsXs}{\{\overline{V}/\bar{z},\overline{W}/\bar{x} \}}
+\newcommand{\substXs}{\{\overline{W}/\bar{x} \}}
+
+\newcommand{\LetK}[2]{\textsf{ctx}\ #1 \ #2}
+%\newcommand{\LetK}[2]{(#1,#2)}
+\newcommand{\opt}[1]{#1_{opt}}
+
+\newcommand{\overlineK}{\overline{K}}
+\newcommand{\overlinePi}{\overline{\Pi}}
+\newcommand{\overlineDelta}{\overline{\Delta}}
+
+%\newcommand{\comp}[1]{\rightsquigarrow_{#1}}
+%\newcommand{\comps}{\rightsquigarrow_{\server}}
+%\newcommand{\compc}{\rightsquigarrow_{\client}}
+\newcommand{\ccomp}[1]{C[\![#1]\!]}
+\newcommand{\scomp}[1]{S[\![#1]\!]}
+\newcommand{\vcomp}[1]{V[\![#1]\!]}
+\newcommand{\cconv}[1]{CC[\![#1]\!]}
+%\newcommand{\cconvprg}[1]{CC_{prg}[\![#1]\!]}
+
+\newcommand{\FUNS}{\Phi}
+\newcommand{\fv}[1]{\textsf{fv}(#1)}
+\newcommand{\dom}[1]{\textsf{dom}(#1)}
+\newcommand{\clo}[2]{clo({#1},{#2})}
+
+\newcommand{\sessionNothing}{\makebox[0.3cm][c]{\scriptsize $nothing$}}
+\newcommand{\sessionSomething}{\makebox[0.3cm][c]{\scriptsize $session$}}
+\newcommand{\sessionOption}{\makebox[0.3cm][c]{\scriptsize $optSession$}}
+
+\newcommand{\mono}[1]{[\![#1]\!]}
+
+\newcommand{\eqdef}{\overset{\mathrm{def}}{=\joinrel=}}
+
+%%
+%\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{fact}{Fact}[section]
+%\newtheorem{definition}{Definition}[section]
+
+%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%\section{Relative Pronoun}
+\begin{frame}
+%\begin{center}
+%{\footnotesize
+%Types and Programming Languages
+%}
+%\end{center}
+	\titlepage
+	
+%	\begin{center}
+%	{
+%  (Joint work with James Cheney, Simon Fowler, and Sam Lindley)
+%	}
+%	\end{center}
+\end{frame}
+
+%\begin{frame}{Table of Contents}
+%\begin{itemize}
+%\item
+%\item
+%\item
+%\item
+%\end{itemize}
+%\end{frame}
+
+\begin{frame}[t]{1.1 Background: Software Engineering} \vspace{10pt}
+
+To make software correctly work and to make it smoothly evolve are very difficult and very expensive.
+
+\vspace{10pt}
+
+Two main approaches to tame  software monsters are 
+\begin{itemize}
+\item empirical software engineering based on {\it experiences}
+
+\item {\it formal methods}  based on {\it mathematics and logics}
+
+\end{itemize}
+
+\vspace{10pt}
+
+In this class, we are interested in formal methods so called {\it type systems}. 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.1 Background: Formal Methods} \vspace{10pt}
+
+
+A broad range of {\it formal methods } in software engineering
+
+\vspace{10pt}
+
+Some powerful frameworks at one end of the spectrum
+
+\begin{itemize}
+
+\item  Hoare logic, Algebraic specification languages, Modal logics, and Denotationl semantics
+
+\end{itemize}
+
+\vspace{10pt}
+
+Pros: They can express very general correctness properties 
+
+\vspace{10pt}
+
+Cons: 
+\begin{itemize}
+\item But they are often cumbersome to use and demand a good deal of sophistication on the part of programmers
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.1 Background: Formal Methods (cont.)} \vspace{10pt}
+
+A broad range of {\it formal methods } in software engineering 
+
+\vspace{10pt}
+
+{\it Lightweight formal methods} at the other end of the spectrum
+\begin{itemize}
+\item Model checkers, Run-time monitoring, {\it Type systems}, etc.
+\end{itemize}
+
+\vspace{10pt}
+
+Cons: 
+\begin{itemize}
+\item Much more modest power than the previous powerful frameworks
+\end{itemize}
+
+\vspace{10pt}
+
+Pros: 
+\begin{itemize}
+\item But modest enough that automatic checkers can be built into compilers  
+\item and thus be applied even by programmers unfamiliar with the underlying theories
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.1 Types in Computer Science} \vspace{10pt}
+
+In this class, a type system is 
+\begin{itemize}
+\item a tractable syntactic method
+\item for proving the absence of certain program behaviors 
+\item by classifying phrases according to the kinds of values they compute
+\end{itemize}
+
+ \vspace{10pt}
+ 
+ $\Rightarrow$ Type systems as tools for reasoning about programs.
+ \vspace{5pt}
+ 
+  $\Rightarrow$ Type systems as calculating a kind of {\it static approximation} to the certain {run-time behaviors of the terms}  in a program.
+  
+ \vspace{10pt}
+ 
+ But type systems (or {\it type theory}) refers to a much broader field of study in logic, mathematics, and philosophy, dating back to the early 1900s as ways of avoiding the logical paradoxes, such as Russell's. 
+ 
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.2 What Type Systems Are Good For} \vspace{10pt}
+
+Detecting errors
+
+\vspace{10pt}
+
+Abstraction
+
+\vspace{10pt}
+
+Documentation
+
+\vspace{10pt}
+
+Language safety
+
+\vspace{10pt}
+
+Efficiency
+
+\vspace{10pt}
+
+Further applications : Automated theorem proving such as with Coq, Isabelle, Agda
+\end{frame}
+
+
+%%%
+\begin{frame}[t]{1.3 Type Systems and Language Design} \vspace{10pt}
+
+Programming language design go hand in hand with type-system design
+
+\vspace{10pt}
+
+The type system itself is the foundation of the design and the organizing principle in typed programming languages
+
+%\vspace{10pt}
+%
+%Trade-off between explicit type annotation vs. automatic type inference
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.4 Capsule History} \vspace{10pt}
+The earliest type systems to make very simple distinctions between integer and floating point representations of numbers in Fortran (1950s)
+
+\vspace{10pt}
+
+This classification was extended to structured data (arrays, records, etc.) and to higher-order functions (1960s)
+
+\vspace{10pt}
+
+A number of even richer concepts (parametric polymorphism, abstract data types, module systems, and subtyping) were introduced (1970s).
+
+\vspace{10pt}
+
+Computer scientists began to be aware of the connections between the type systems found in PLs and those studied in mathematical logic! 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{1.5 Related Reading} \vspace{10pt}
+
+Many useful, interesting, and mind-blowing textbooks about types and programming languages 
+
+\end{frame}
+
+\end{document}
+
+\begin{frame}[t,fragile]{Types in Computer Science} \vspace{10pt}
+
+Formal methods(정형기법) in software engineering
+\begin{itemize}
+\item  Uses the syntax of $\lambda$-application for remote procedure calls
+\end{itemize}
+
+\begin{lstlisting}[escapechar=\%,language=lisp]
+fun main() client { %\underline{authenticate}% () }
+
+fun authenticate() server { 
+ var creds = %\underline{getCredentials}%( "Enter name:passwd > " )
+ if ( creds=="ezra:opensesame" ) { "The secret document" }
+ else { "Access denied" }
+}
+
+fun getCredentials(prompt) client {
+ (print(prompt);  read) 
+}
+\end{lstlisting}
+
+cf. The other tierless PLs (ML5, Hop, Ur/Web, Eliom, etc.)
+support asymmetric communication, or they are for peer-to-peer model.
+
+\end{frame}
+
+%%%
+%\begin{frame}[t]{In this research} \vspace{10pt}
+% 
+%A theory of RPC calculi for client-server model
+%\begin{itemize}
+%\item Static identification of remote procedure calls % \\ (cf. Dynamic identification of RPCs)
+%\item Type-based slicing into the client and server parts % \\ $~$ \ \ stateless strategy and stateful strategy
+%\end{itemize}
+%\vspace{10pt}
+%
+%\begin{center}
+%\includegraphics[width=0.9\textwidth]{overview_typedrpconly}
+%\end{center}
+%
+%\end{frame}
+
+%%%
+\begin{frame}[t]{The  RPC calculus (Cooper\&Wadler, 2009)} \vspace{10pt}
+
+A call-by-value $\lambda$-calculus with location annotated $\lambda$-abstractions \\
+\begin{itemize}
+\item $\lambda^a x.N$ :  $\lambda$-abstraction that must run at location $a$
+\item $\evalRPC{M}{a}{V}$ : A term $M$ at location $a$ evaluates to $V$
+\end{itemize}
+\vspace{10pt}
+
+\begin{tabular}{l l l c l c l }
+   & Location & $a,b$ 	& $::=$ & $\client$	& $|$		& $ \server$		 \\ \\
+   & Term     & $L,M,N$	& $::=$ & $V$		& $ |$	& $L \ M$			 \\
+   & Value    & $V,W$	& $::=$ & $x$		& $ |$	& $ \lambda^a x.N$
+\end{tabular} 
+\vspace{10pt}
+
+\begin{tabular}{l l l c l c l }
+  & \multicolumn{6}{l}{Evaluation} \\
+  & \multicolumn{6}{c}{
+  	\mbox{
+       \begin{prooftree}
+       		\infer0[{\footnotesize (Abs)}]{ \evalRPC{\lamL{b}{x}{M}}{a}{\lamL{b}{x}{M}} }
+	\end{prooftree}
+  	}
+    } \\[0.4cm]
+  & \multicolumn{6}{c}{
+  	\mbox{
+	\begin{prooftree}
+  		\hypo{ \evalRPC{L}{a}{\lamL{b}{x}{N}} }
+  		\hypo{ \evalRPC{M}{a}{W} }
+  		\hypo{ \evalRPC{N\subst{W}{x}}{b}{V}  }
+  		\infer3[{\footnotesize (App)}]{ \evalRPC{L \ M}{a}{V}  }
+	\end{prooftree} 
+  	}
+    }     
+\end{tabular}
+
+\end{frame}
+
+\begin{frame}[t]{The typed RPC calculus (Choi\&Chang 2019)} \vspace{10pt}
+
+Every $\lambda$-abstraction  of type $A\funL{a}B$  runs at  location $a$. 
+
+\vspace{10pt}
+
+\begin{tabular}{l l l c l c l }
+   & Type     & $A,B$ & $::=$ & $base$ & $ | $ & $ A\funL{a}A$ 
+\end{tabular} 
+
+\vspace{20pt}
+
+\begin{itemize}
+\item 
+$
+(\lamL{ \server }{f}{ \ (\lamL{\server}{x}{x}) \  ({\color{red} f} \ M)  }) \ \ (\lamL{\client}{y}{  \ (\lamL{\server}{z}{z}) \ \ y   })
+$
+\\[0.3cm]
+Well-typed where $f : A\funL{{\color{red} \client}}B$ % {\color{red} at the server}. \\ 
+% In other word, `$f \ M$' is a remote procedure call (RPC).
+
+\vspace{20pt}
+
+\item
+$
+(\ \lamL{\client}{f}{ \ {\color{red} f } \ M } \ ) \ \ 
+	(\sf{if} \ \cdots 
+		\ \sf{then} \ \lamL{\client}{x}{M_1} 
+		\ \sf{else} \ \lamL{\server}{y}{M_2})
+$
+\\[0.3cm]
+Ill-typed because neither $f  : A\funL{\client}B$ nor $f  : A\funL{\server}B$ 
+\end{itemize}
+ 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{The typed RPC calculus (cont.)} \vspace{10pt}
+
+%A locative type system for the RPC calculus  that can identify remote procedure calls  statically 
+%\vspace{20pt}
+
+A typing judgment, $\typing{\tyenv}{a}{M}{A}$, says:
+\begin{itemize}
+\item A term $M$ at location $a$ has type $A$ under a type environment $\tyenv$ 
+\end{itemize}
+
+\vspace{20pt}
+
+Key idea: A refinement of the lambda application typing w.r.t. the combinations of  location $a$ and  location $b$ 
+
+\begin{center}
+ \mbox{
+	\begin{prooftree}
+		\hypo{ \typing{\tyenv}{ {\color{red} a} }{L}{A\funL{ {\color{red} b} }B} }
+		\hypo{ \typing{\tyenv}{ {\color{red} a} }{M}{A}  }
+		\infer2{ \typing{\tyenv}{ {\color{red} a} }{L \ M}{B} }
+	\end{prooftree}  
+  }
+\end{center}
+
+\vspace{10pt}
+
+cf. 
+  	\mbox{
+	\begin{prooftree}
+  		\hypo{ \evalRPC{L}{a}{\lamL{b}{x}{N}} }
+  		\hypo{ \evalRPC{M}{a}{W} }
+  		\hypo{ \evalRPC{N\subst{W}{x}}{b}{V}  }
+  		\infer3[{\footnotesize (App)}]{ \evalRPC{L \ M}{a}{V}  }
+	\end{prooftree} 
+  	}
+  	
+ \vspace{10pt}
+ The key idea is essential for the type-directed slicing compilations in the typed RPC calculus to distinguish RPC from L(ocal)PC.
+
+\end{frame}
+
+%%%
+%\begin{frame}[t]{Background} \vspace{10pt}
+%
+%Only the RPC calculus supports symmetric communication programming  for client-server model.
+%\begin{itemize}
+%\item The other tierless PLs (ML5, Hop, Eliom, etc.)
+%support asymmetric communication, or they are for peer-to-peer model.
+%\end{itemize}
+%\vspace{10pt}
+%
+%The RPC calculus supports only the stateless server style by 
+%the complex slicing compilation rules.
+%\begin{itemize}
+%\item due to the lack of location info. in application expressions
+%\end{itemize}
+%\vspace{10pt}
+%
+%The typed RPC calculus (Choi\&Chang, 2019) supports both the stateless and the stateful server style 
+%\begin{itemize}
+%\item by the simple slicing compilation rules exploiting type-based location information
+%\end{itemize}
+%
+%\end{frame}
+
+%%%
+\begin{frame}[t]{Problem} \vspace{10pt}
+
+However, the typed RPC calculus does not support polymorphic locations.
+\vspace{10pt}
+
+For example, we may want to write $map$ as:
+	 \[
+	 	(\Lambda l. \lamL{l}{f}{ \lamL{l}{xs}{\ \cdots}}) \ : \ \forall l. (A \funL{l} B) \funL{l} ([A] \funL{l} [B])
+	\] 
+
+to instantiate it as a client function by $map [\client]$, which becomes 
+	\[
+		\lamL{\client}{f}{ \lamL{\client}{xs}{\ \cdots}} \ : \  (A \funL{\client} B) \funL{\client} ([A] \funL{\client} [B])
+	\]
+
+\vspace{10pt}
+
+$\Rightarrow$ A technical challenge: The key idea of  the typed RPC calculus becomes useless due to the presence of location variables $l$. 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{A solution} 
+ 
+A parametric polymorphism over locations for programmers to use
+\begin{itemize}
+\item location abstraction ($\Lambda l. V$) and
+\item location application ($M[l]$)
+\end{itemize}
+\vspace{10pt}
+
+A translation of polymorphic locations into monomorphic ones for compiler writers to utilize the existing slicing compilations
+\vspace{10pt}
+
+How?  by interpreting
+\begin{itemize}
+\item location abstraction as a pair of client/server instances, and
+\item location application as a projection from the pair
+\end{itemize}
+\vspace{10pt}
+
+For example,
+\vspace{-15pt}
+\begin{eqnarray*}
+id= \Lambda l.\lamL{l}{x}{x} & \Rightarrow & \mono{id}=(\lamL{\client}{x}{x}, \lamL{\server}{x}{x}) \\
+id[\client] & \Rightarrow & \pi_1(\mono{id})\\
+id[\server] & \Rightarrow & \pi_2(\mono{id}) 
+\end{eqnarray*}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{In this research} \vspace{10pt}
+ 
+An extension of the typed RPC calculus with the notion of polymorphic location 
+\vspace{10pt}
+
+\begin{itemize}
+\item A polymorphic RPC calculus that supports a parametric polymorphism over locations for programmers
+\vspace{5pt}
+
+\item A monomorphization translation of the polymorphic RPC calculus into the typed RPC calculus for compiler writers
+\vspace{5pt}
+
+\item Type soundness of the polymorphic location type system and the type/semantics correctness of the translation
+\vspace{5pt}
+\end{itemize}
+
+\end{frame}
+
+
+%%%%
+%\begin{frame}[t]{Related Work} \vspace{10pt}
+%
+%Symmetric communication for peer-to-peer model
+%\begin{itemize}
+%\item Lambda5 (Murphy VII et al, 2004), ML5 (Murphy, 2008)
+%: Modal logic based calculus 
+%\vspace{5pt}
+%
+%\item A multi-tier calculus (Neubauer \& Thiemann, 2005) 
+%: Automatic compilation of RPC with session types
+%\vspace{5pt}
+%\end{itemize}
+%
+%Symmetric communication for client-server model 
+%\begin{itemize}
+%\item Links (Cooper et al, 2007), RPC (Cooper\&Wadler, 2009)
+%\vspace{5pt}
+%\end{itemize}
+%
+%Asymmetric communication for client-server model
+%\begin{itemize}
+%\item Hop (Serrano \& Queinnec, 2010)
+%\vspace{5pt}
+%
+%\item Ur/Web (Chlipala, 2015) : A dependently typed calculus
+%\vspace{5pt}
+%
+%\item Eliom (Radanne, 2017)  : Module with location
+%\vspace{5pt}
+%\end{itemize}
+%
+%\end{frame}
+
+%%%
+\begin{frame}[t]{Overview} \vspace{10pt}
+
+A polymorphically locative type system with a monomoprhization translation for an extension of the typed RPC calculus
+\begin{center}
+\includegraphics[width=\textwidth]{polyrpc_figure}
+\end{center}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{Part I: A polymorphic  RPC calculus} \vspace{10pt}
+
+\hspace*{-0.5cm}
+\begin{tabular}{l l l c l c l c l c l }
+   & Location & $a,b$ 	& $::=$ & $\client$	& $|$		& $ \server$		 \\ 
+	&	                  & $\Loc$   	& $::=$  	& $a$              	& $|$          & $l$   \\
+   & Term     & $L,M,N$	& $::=$ & $V$		& $ |$	& $L \ M$	&	$ |$	& $M[\Loc]$ & $|$	& $M[A]$		 \\
+   & Value    & $V,W$	& $::=$ & $x$		& $ |$	& $ \lamL{\Loc}{x}{N}$ &		$|$		& $\Lambda l.V$ 	& $|$	& $\Lambda\alpha.V$
+\end{tabular} 
+\vspace{10pt}
+
+\hspace*{-0.5cm}
+\begin{tabular}{l l l c l c l }
+  & \multicolumn{6}{l}{Evaluation} \\
+  & & \multicolumn{5}{c}{
+  	\mbox{
+       \begin{prooftree}
+       		\infer0[{\footnotesize (Abs)}]{ \evalRPC{\lamL{b}{x}{M}}{a}{\lamL{b}{x}{M}} }
+	\end{prooftree}
+  	}
+    } \\[0.5cm]
+  & & \multicolumn{5}{c}{
+  	\mbox{
+	\begin{prooftree}
+  		\hypo{ \evalRPC{L}{a}{\lamL{b}{x}{N}} }
+  		\hypo{ \evalRPC{M}{a}{W} }
+  		\hypo{ \evalRPC{N\subst{W}{x}}{b}{V}  }
+  		\infer3[{\footnotesize (App)}]{ \evalRPC{L \ M}{a}{V}  }
+	\end{prooftree} 
+  	}
+    }  \\[0.5cm]
+    & & \multicolumn{5}{c}{
+    	\mbox{
+    		\begin{prooftree}
+       		\infer0[{\footnotesize(Labs)}]{ \evalRPC{\Lambda l.V}{a}{\Lambda l.V} }
+	\end{prooftree}
+	\ \ \ 
+	\begin{prooftree}
+  		\hypo{ \evalRPC{M}{a}{\Lambda l.{V}} }
+    		\infer1[{\footnotesize(Lapp)}]{ \evalRPC{M[b]}{a}{V\subst{b}{l}}  }
+	\end{prooftree} 
+
+    	}
+    }   
+\end{tabular}
+\vspace{10pt}
+
+cf. (Tabs) and (Tapp)
+
+\end{frame}
+
+
+%%%
+%%%
+\begin{frame}[t]{A type system for the polymorphic  RPC calculus} \vspace{10pt}
+
+\hspace*{-1cm}
+\begin{tabular}{l l l c l c l c l c l c l }
+& Type & $A,B$ & $::=$ & $base$ & $ | $ & $ A\funL{\Loc}A$  & $ | $ & $ \forall l.A$ & $|$ & $\alpha$ & $|$ & $\forall\alpha.A$ 
+\end{tabular} 
+\vspace{10pt}
+
+\hspace*{-1cm}
+\begin{tabular}{l l l c l c l }
+  & \multicolumn{6}{l}{Typing rules} \\
+  & & \multicolumn{5}{c}{
+  \mbox{
+  	\begin{prooftree}
+		\hypo{  \tyenv(x)=A }
+		\infer[left label={\footnotesize (T-Var)}]1{ \typing{\tyenv}{\Loc}{x}{A} }
+	\end{prooftree}
+	\ \ \ \ \ 
+	\begin{prooftree}
+		\hypo{ \typing{\tyenvExt{x}{A}}{\Loc}{M}{B} }
+		\infer[left label={\footnotesize(T-Abs)}]1{ \typing{\tyenv}{\Loc'}{\lamL{\Loc}{x}{M}}{A\funL{\Loc}B} } 
+	\end{prooftree}
+    } 
+    } \\[0.7cm]
+  & & \multicolumn{5}{c}{
+ \mbox{
+	\begin{prooftree}
+		\hypo{  \typing{\tyenv}{\Loc}{L}{A\funL{\Loc'}B } }
+		\hypo{  \typing{\tyenv}{\Loc}{M}{A} }
+		\infer[left label={\footnotesize(T-App)}]2{ \typing{\tyenv}{\Loc}{L \ M}{B}   }
+	\end{prooftree}
+	}
+    }  \\[0.7cm]
+    & & \multicolumn{5}{c}{
+  \mbox{
+	\begin{prooftree}
+		\hypo{ \typing{\tyenvExtWith{l}}{\Loc}{V}{A} }
+		\infer[left label={\footnotesize(T-Labs)}]1{ \typing{\tyenv}{\Loc}{\Lambda l.V}{\forall l.A }} 
+	\end{prooftree}
+	\ \ \ \ \ 
+	\begin{prooftree}
+		\hypo{ \typing{\tyenv}{\Loc}{M}{\forall l.A } }
+		\infer[left label={\footnotesize(T-Lapp)}]1{ \typing{\tyenv}{\Loc}{M[\Loc']}{A\subst{\Loc'}{l}}} 
+	\end{prooftree}
+    } 
+
+
+    }   
+\end{tabular}
+\vspace{10pt}
+
+cf. (T-Tabs) and (T-Tapp)
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{Properties of the polymorphic type system} \vspace{10pt}
+
+Type soundness for the polymorphic RPC calculus
+\begin{itemize} 
+\item  For a closed term $M$, if \ $\typing{\emptyset}{a}{M}{A}$ and $\evalRPC{M}{a}{V}$, then $\typing{\emptyset}{a}{V}{A}$.
+\end{itemize}
+
+\vspace{10pt}
+
+No lambda abstraction with any location variable will be a value during evaluation on closed terms.
+
+\end{frame}
+
+%%%%
+\begin{frame}[t]{Part II: A monomorphization translation of {\polyrpc} into {\rpc}} 
+
+A basic idea: location abstraction as a pair of client/server instances, and location application as its projection
+\vspace{7pt}
+
+\begin{tabular}{l l l l l l l l l }
+\multicolumn{9}{l}{Translation: types} \\
+\ \ 
+	$\mono{base}=base$  & 
+\\[0.2cm]
+\ \ 
+	$\mono{\alpha}=\alpha$ &
+	$\mono{\forall\alpha.A}=\forall\alpha.\mono{A}$
+\\[0.2cm]
+\ \ 
+	{\color{blue} $\mono{A \funL{a}B}=\mono{A}\funL{a}\mono{B}$ } & 
+	{\color{red} $\mono{\forall l.A} = \mono{ A\subst{\client}{l} } \times \mono{A\subst{\server}{l} }$ }
+\\[0.5cm]
+\multicolumn{9}{l}{Translation: terms} \\
+\ \ 
+	$\mono{x}=x$ &
+	{\color{blue}  $\mono{\lamL{a}{x}{M}} = \lamL{a}{x}{\mono{M}}$ } &
+\\[0.2cm]
+\ \ 
+	$\mono{L \ M} = \mono{L} \ \mono{M}$ &
+\\[0.2cm]
+\ \ 
+	$\mono{\Lambda\alpha.V}=\Lambda\alpha.\mono{V}$ &
+	$\mono{M[B]}=\mono{M}[\mono{B}]$
+\\[0.2cm]
+\multicolumn{9}{l}{\ \ {\color{red} $\mono{\Lambda l. V} = (\mono{V\subst{\client}{l}}, \mono{V\subst{\server}{l}})$ }}
+\\[0.2cm]
+\ \ 
+	{\color{red} $\mono{M[\client]}  = \pi_1(\mono{M})$ } &
+	{\color{red} $\mono{M[\server]} = \pi_2(\mono{M})$ }
+\end{tabular}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{Example (1)} 
+
+The identity function:
+	\begin{eqnarray*}
+		\mono{\forall l. \forall\alpha.\alpha\funL{l}\alpha} 
+		&=& (\mono{(\forall\alpha.\alpha\funL{l}\alpha)\subst{\client}{l}}, \ \mono{(\forall\alpha.\alpha\funL{l}\alpha)\subst{\server}{l}})  \\
+		&=& (\mono{(\forall\alpha.\alpha\funL{\client}\alpha)}, \ \mono{(\forall\alpha.\alpha\funL{\server}\alpha)}) \\
+		&=& (\forall\alpha.\mono{(\alpha\funL{\client}\alpha)}, \ \forall\alpha.\mono{(\alpha\funL{\server}\alpha)}) \\
+		&=& (\forall\alpha.\mono{\alpha}\funL{\client}\mono{\alpha}, \ \forall\alpha.\mono{\alpha}\funL{\server}\mono{\alpha}) \\
+		&=& (\forall\alpha.\alpha\funL{\client}\alpha, \ \forall\alpha.\alpha\funL{\server}\alpha) 
+\\
+\\
+		\mono{\Lambda l. \Lambda\alpha.\lamL{l}{x}{x}} 
+		&=& (\mono{(\Lambda\alpha.\lamL{l}{x}{x})\subst{\client}{l}}, \ \mono{(\Lambda\alpha.\lamL{l}{x}{x})\subst{\server}{l}})  \\
+		&=& (\mono{\Lambda\alpha.\lamL{\client}{x}{x}}, \ \mono{\Lambda\alpha.\lamL{\server}{x}{x}})  \\
+		&=& (\Lambda\alpha.\mono{\lamL{\client}{x}{x}}, \ \Lambda\alpha.\mono{\lamL{\server}{x}{x}})  \\
+		&=& (\Lambda\alpha.\lamL{\client}{x}{\mono{x}}, \ \Lambda\alpha.\lamL{\server}{x}{\mono{x}}) \\
+		&=& (\Lambda\alpha.\lamL{\client}{x}{x}, \ \Lambda\alpha.\lamL{\server}{x}{x}). 
+	\end{eqnarray*}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{Example (2)} 
+
+%Assume $M_X$ is a body of a map function parameterized by location arguments $X$ as 
+
+A map function of type $\forall l. (A \funL{l} B) \funL{l} ([A] \funL{l} [B])$: 
+\[
+	\texttt{ letrec } \ map = \Lambda{l}.\lamL{l}{f}{ \lamL{l}{xs}{ M_{l} } } \ \texttt{ in } \ \cdots
+\]
+where 
+$
+M_X \eqdef case \ xs \ of \ \{ [] \Rightarrow []; \ (y:ys) \Rightarrow f \ y ::  map [X] \ f \ ys \}
+$
+	\begin{eqnarray*}
+	\mono{map} &=& ( \mono{ (\lamL{l}{f}{ \lamL{l}{xs}{ M_{l}} }) \subst{\client}{l} } ,  \ \ \mono{ (\lamL{l}{f}{ \lamL{l}{xs}{ M_{l}} }) \subst{\server}{l} } ) \\
+	&=& ( \mono{ \lamL{\client}{f}{ \lamL{\client}{xs}{ M_{\client}} } } , \ \ \mono{\lamL{\server}{f}{ \lamL{\server}{xs}{ M_{\server}} } } ) \\
+	&=& ( \lamL{\client}{f}{ \mono{\lamL{\client}{xs}{ M_{\client}} } } , \ \ \lamL{\server}{f}{ \mono{\lamL{\server}{xs}{ M_{\server}} } } ) \\
+	&=& ( \lamL{\client}{f}{ \lamL{\client}{xs}{ \mono{M_{\client}} } } , \ \ \lamL{\server}{f}{ \lamL{\server}{xs}{ \mono{M_{\server}} } } ).
+	\end{eqnarray*} 
+where 
+\begin{itemize}
+\item $\mono{map[\client]}$ in $\mono{M_{\client}}$ is translated as $\pi_1(\mono{map})$, and 
+\item $\mono{map[\server]}$ in $\mono{M_{\server}}$ is translated as $\pi_2(\mono{map})$.
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{Example (3)} 
+
+A map function of type $\forall l_1.\forall l_2.\forall l_3. (A \funL{l_3} B) \funL{l_1} ([A] \funL{l_2} [B])$: 
+\[
+\texttt{ letrec } \ map = \Lambda{l_1}.\Lambda{l_2}.\Lambda{l_3}.map_0  \ \texttt{ in } \ \cdots
+\]
+where  $map_0 \ = \ \lamL{l_1}{f}{ \lamL{l_2}{xs}{ \ M_{l_1 l_2 l_3} }}$
+\vspace{10pt}
+
+$\mono{map}$ is translated as
+\[
+		\left(
+	\mbox{
+		\begin{tabular}{l }
+		$\left( 
+			\mbox{
+			\begin{tabular}{l }
+			$( \mono{map_0\{\client/l_1,\client/l_2,\client/l_3\}},  \mono{map_0\{\client/l_1,\client/l_2,\server/l_3\}} ),$ \\
+			$( \mono{map_0\{\client/l_1,\server/l_2,\client/l_3\}},  \mono{map_0\{\client/l_1,\server/l_2,\server/l_3\}} )$
+			\end{tabular}
+			}
+		\right),$ \\ 
+		$\left( 
+			\mbox{
+			\begin{tabular}{l }
+			$( \mono{map_0\{\server/l_1,\client/l_2,\client/l_3\}},  \mono{map_0\{\server/l_1,\client/l_2,\server/l_3\}} ),$ \\
+			$( \mono{map_0\{\server/l_1,\server/l_2,\client/l_3\}},  \mono{map_0\{\server/l_1,\server/l_2,\server/l_3\}} )$
+			\end{tabular}
+			}
+		\right)$
+		\end{tabular}
+	}
+	\right)
+\]
+\vspace{5pt}
+
+The monomorphization translation could generate many instances in theory, but  the first map function would be common in practice. 
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{Properties of the monomorphization translation} \vspace{10pt}
+
+Type correctness of the translation
+\begin{itemize} 
+\item  For a closed term $M$, if \ $\typing{\emptyset}{a}{M}{A}$ in {\polyrpc} then $\typing{\emptyset}{a}{\mono{M}}{\mono{A}}$ in {\rpc}.
+\end{itemize}
+
+\vspace{10pt}
+
+Semantic correctness of the translation
+\begin{itemize} 
+\item For a closed term $M$, if \ $\typing{\emptyset}{a}{M}{A}$ and $\evalRPC{M}{a}{V}$ in {\polyrpc}, then $\evalRPC{\mono{M}}{a}{\mono{V}}$ in {\rpc}.
+\end{itemize}
+
+\end{frame}
+
+%%%
+\begin{frame}[t]{Conclusion} 
+
+The polymorphic RPC calculus 
+\begin{itemize}
+\item provides a parametric polymorphism over locations, and 
+\item can utilize the existing type-directed slicing compilations.
+\end{itemize}
+
+\begin{center}
+\includegraphics[width=1\textwidth]{polyrpc_figure}
+\end{center}
+
+%\begin{center}
+%\includegraphics[width=\textwidth]{loch_katrine}
+%\end{center}
+
+\end{frame}
+
+\end{document}
+
