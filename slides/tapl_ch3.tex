@@ -302,7 +302,7 @@ A program in the untyped arithmetic programming language is just a term built by
 
 \vspace{10pt}
 
-For notational simplicity, \texttt{succ (succ (succ 0))} is written as \texttt{3}.
+For simple notation, \texttt{succ (succ (succ 0))} is written as \texttt{3}.
 
 \vspace{10pt}
 
@@ -479,7 +479,7 @@ Informally, assume $P$ is true over terms with depth $\leq d$, and then prove $P
 
 \vspace{10pt}
 
-Formally, the principle of induction on the depth of terms:
+Formally, {\color{red} the principle of induction on the depth of terms}:
 \begin{itemize}
 \item If, for each term \texttt{s}, \\
  \ \ \ given $P(\texttt{r})$ for all \texttt{r} such that $depth(\texttt{r})<depth(\texttt{s})$ \\
@@ -496,12 +496,12 @@ Suppose $P$ is a predicate on terms.
 
 \vspace{10pt}
 
-Informally, assume $P$ is true over terms with size $\leq sz$, and then prove $P$ over terms with depth $sz+1$ using the assumption.
+Informally, assume $P$ is true over terms with size $\leq sz$, and then prove $P$ over terms with size $sz+1$ using the assumption.
 
 
 \vspace{10pt}
 
-Formally, the principle of induction on the size of terms:
+Formally, {\color{red} the principle of induction on the size of terms}:
 \begin{itemize}
 \item If, for each term \texttt{s}, \\
  \ \ \ given $P(\texttt{r})$ for all \texttt{r} such that $size(\texttt{r})<size(\texttt{s})$ \\
@@ -523,7 +523,7 @@ Informally, assume $P$ is true over subterms, and then prove $P$ over terms cons
 
 \vspace{10pt}
 
-Formally, the principle of structural induction ove terms:
+Formally, {\color{red} the principle of structural induction over terms}:
 \begin{itemize}
 \item If, for each term \texttt{s}, \\
  \ \ \ given $P(\texttt{r})$ for all (immediate) subterms \texttt{r} of \texttt{s} \\
@@ -545,7 +545,7 @@ Proof by induction on the depth of \texttt{t}.
 
 \vspace{10pt}
 
-Q. Which of the (normal) induction or the complete induction is necessary for this proof? Why?
+Q. Which principle of induction is necessary for this proof? Why?
 
 \end{frame}
 
@@ -574,7 +574,7 @@ In axiomatic semantics, the meaning of a program is defined by logical rules. (c
 %%%
 \begin{frame}[t]{3.5 Evaluation: The boolean part of the arithmetic PL} 
 
-Syntax
+(Partial) Syntax of terms and values
 
 \vspace{5pt}
 
@@ -749,6 +749,11 @@ Terms \texttt{t} & $::=$ &
 Values \  \texttt{v} & $::=$ & \texttt{true} \ $|$ \ \texttt{false} \ $|$ \ \texttt{nv}\\
 Num. values \ \texttt{nv} & $::=$ & \texttt{0} \ $|$ \ \texttt{succ nv}
 \end{tabular}
+
+\vspace{1cm}
+
+Q. Describe a set of terms $S_{terms}$ whose elements are defined by Terms.  Also describe a set of values $S_{values}$ whose elements are defined by Values.  (Refer to P.6)
+
 
 \end{frame}
 
