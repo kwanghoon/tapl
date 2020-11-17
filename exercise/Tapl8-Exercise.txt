@@ -14,6 +14,8 @@ Study the following topics in the textbook.
  
  - Typing rules
 
+ - Type safety
+
 ===================================================================================
 
 Exercises
