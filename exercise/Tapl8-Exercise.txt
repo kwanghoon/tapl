@@ -74,7 +74,7 @@ Exercises
  ———————————————–  (T-IsZero)
   iszero t1 : Nat
  
- mean?
+ means?
 
 
  [SOLUTION]
@@ -132,7 +132,7 @@ Exercises
 
 (A concept for type safety property)
 
- - Explain what does mean by the type safety property of a type
+ - Explain what is meant by the type safety property of a type
    system, or shortly safety?
 
  [SOLUTION]
