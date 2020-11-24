@@ -1,0 +1,133 @@
+
+TAPL Self Exercises (Ch.5 The Untyped Lambda Calculus)
+
+
+===================================================================================
+Name:
+Student ID:
+===================================================================================
+
+
+Study the following topics in the textbook.
+
+ - Terminologies: a core calculus and derived forms
+ 
+ - Syntax of lambda calculus 
+
+ - Operational semantics (and substitutions)
+
+ - Programming in the lambda calculus
+
+===================================================================================
+
+Exercises
+
+
+5.1 Basics
+
+
+(Core calculus and dervied forms)
+
+ - Explain briefly what is a core caclulus and what are derived forms?
+
+ [SOLUTION]
+
+
+
+
+(The syntax of lambda calculus)
+
+ - Write the syntax of the lambda calculus:
+
+ [SOLUTION]
+
+
+
+
+ - What is variable in the syntax in the syntax?
+
+[SOLUTION]
+
+
+ - What is abstraction in the syntax?
+
+[SOLUTION]
+
+
+ - What is application in the syntax?
+ 
+ [SOLUTION]
+
+
+
+ - If you write 1 + 2 + 3, it means (1 + 2) + 3.
+   You don't have to write the parenthesis.
+
+   The plus operation (+) is said to be left-associative
+   because the parentheses may be omitted. 
+
+   For 's t u', it is the same as '(s t) u'.
+   If you want to write s (t u), you should not
+   omit the parenthesis.
+
+   So, the lambda application (operation) is
+
+    (1) left associative
+    (2) right associative
+
+   ?
+ [SOLUTION]
+
+
+
+ - Explain briefly the difference between meta variables
+   and (object) variables in the lambda calculus.
+
+ [SOLUTION]
+
+
+(The semantics of lambda calculus)
+
+
+ - Explain briefly the difference between free variables
+   and bound variables
+
+ [SOLUTION]
+
+
+
+ - Explain briefly a single step evaluation ---> on
+   lambda terms. 
+
+ [SOLUTION]
+
+
+
+ - Refer to Page 22 for the definition of FV(t), a set of
+   free variables occurring in the term t. 
+
+  Explain briefly the defition of FV(t) for variable, abstraction, and
+  application terms. .
+
+ [SOLUTION]
+
+
+
+
+
+
+ - Refer to Page 23 for the definition of substitutions
+   [x |->s ] t.
+
+  Explain briefly what is [x |-> s]t. 
+
+ [SOLUTION]
+
+
+
+
+
+
+5.2 Programming in the lambda calculus
+
+[Will be updated]
