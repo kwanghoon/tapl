@@ -130,4 +130,150 @@ Exercises
 
 5.2 Programming in the lambda calculus
 
-[Will be updated]
+ - Explain how a lambda calculus handles more than two arguments by
+   writing an add function under the assumption that (+) and the
+   reduction n + m are available.
+
+   [Hint: Slide P.11]
+
+ [SOLUTION]
+
+
+
+
+ - Explain how to encode boolean values(true and false) and a test function
+   with a property as
+   
+      (1) test tru m n -> ... -> m
+      (2) test fls m n -> ... -> n
+
+   for some terms m and n. 
+
+   [Hint: Slide P.12]
+   
+ [SOLUTION]
+
+   tru = 
+
+
+   fls = 
+
+
+   test = 
+
+
+ - Verify the propery using your solution.
+
+ [SOLUTION]
+ 
+     (1) test tru m n -> [ fill in the reduction process here ] -> m
+
+
+     (2) test tru m n -> [ fill in the reduction process here ] -> n
+
+
+ - The logical conjunction (and) is defined as
+
+        and = λb. λ c. b c fls
+
+   Verify the defintion of and if it does the logical conjunction by showing:
+
+
+ [SOLUTION]
+ 
+     (1) and tru tru -> [ fill in the reduction process here ] -> tru
+
+
+     (2) and tru fls -> [ fill in the reduction process here ] -> fls
+
+
+     (3) and fls tru -> [ fill in the reduction process here ] -> fls
+
+
+     (4) and fls fls -> [ fill in the reduction process here ] -> fls
+
+
+ - Define the logical or and the logical not functions. How do you
+   know that they works well?
+
+ [SOLUTION]
+ 
+    or =
+
+    not =
+
+
+    
+ - Define the functions pair (to create a pair), fst (to select the
+   first element of a pair), and snd (to select the second element of
+   a pair)
+
+ [SOLUTION]
+ 
+    pair =
+
+
+    fst =
+
+
+    snd =
+
+
+
+ - Using the solution for pair, fst, and snd, evaluate the following
+   terms.
+
+ [SOLUTION]
+ 
+   fst ( pair v w ) ->
+
+
+   snd ( pair v w ) ->
+
+
+   for some terms v and w. 
+
+
+ - Under the definition of the church numerals as
+
+    c₀ = λs.λz.z
+    c₁ = λs.λz.s z
+    c₂ = λs.λz.s² z
+    ⋯
+    cₙ = λs.λz.sⁿ z
+    ⋯
+
+   denoting the numbers, zero, one, two, ..., n.
+
+
+   Given a function addone
+
+    addone = λn. λs. λz. s (n s z)
+
+   Evaluate the following term:
+   
+ [SOLUTION]
+
+    addone c¹ →
+
+
+ - Under the definition of the church numerals above,
+   plus and times are defined as follows.
+    
+
+    (1) plus = λm. λn. λs. λz. m s (n s z)
+
+    (2) times = λm. λn. m (plus n) c₀
+
+
+   Evaluate the following temrs.
+
+ [SOLUTION]
+
+   plus c₂ c₁ →
+
+
+   times c₂ c₁ →
+
+
+
